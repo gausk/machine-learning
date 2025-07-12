@@ -1,0 +1,4 @@
+[workspace]
+members = [
+    "supervised-learning/module1/l1-intro"
+]
