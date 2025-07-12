@@ -1,5 +1,13 @@
 [workspace]
+workspace.resolver = "3"
 members = [
+    # Module 1, Lab 1: Introduction
     "supervised-learning/module1/l1-intro",
+    # Module 1, Lab 2: Model Representation
     "supervised-learning/module1/lab2-model-representation",
 ]
+
+[workspace.package]
+edition = "2024"
+authors = ["Gaurav Kumar <gauravsingh12341@gmail.com>"]
+description = "Rust implementations of all labs for Andrew Ng's Coursera Machine Learning course."
