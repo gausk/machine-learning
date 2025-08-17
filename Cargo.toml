@@ -1,7 +1,8 @@
 [workspace]
 members = [
     "supervised-learning/module1/l1-intro",
-    "supervised-learning/module1/lab2-model-representation",
+    "supervised-learning/module1/lab2-model-representation", 
+    "supervised-learning/module1/lab3-cost-function"
 ]
 resolver = "3"
 

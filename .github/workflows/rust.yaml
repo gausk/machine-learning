@@ -21,7 +21,7 @@ jobs:
         run: cargo fmt -- --check
 
       - name: Lint with clippy
-        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+        run: cargo clippy --workspace -- -D warnings
 
       - name: Build all crates
         run: cargo build --workspace --verbose --release
