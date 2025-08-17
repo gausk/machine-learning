@@ -1,5 +1,3 @@
-use std::f64::INFINITY;
-
 use ndarray::{Array1, array};
 use plotters::prelude::*;
 
@@ -11,11 +9,16 @@ fn compute_cost(x_train: &Array1<f64>, y_train: Array1<f64>, w: f64, b: f64) -> 
         .zip(y_train.iter())
         .map(|(&x, &y)| (w * x + b - y).powi(2))
         .sum();
-    cost_sum / (2* m ) as f64
+    cost_sum / (2 * m) as f64
 }
 
-
-fn plot_house(x_train: &Array1<f64>, y_train: &Array1<f64>, w: f64, b: f64, filename: &str) -> Result<(), Box<dyn std::error::Error>> {
+fn plot_house(
+    x_train: &Array1<f64>,
+    y_train: &Array1<f64>,
+    w: f64,
+    b: f64,
+    filename: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
     let root = BitMapBackend::new(filename, (640, 480)).into_drawing_area();
     root.fill(&WHITE)?;
 
@@ -39,12 +42,15 @@ fn plot_house(x_train: &Array1<f64>, y_train: &Array1<f64>, w: f64, b: f64, file
         .draw()?;
 
     // Draw actual values
-    chart.draw_series(
-        x_train.iter().zip(y_train.iter()).map(|(&x, &y)| {
-            Circle::new((x, y), 5, RED.filled())
-        })
-    )?.label("Actual Value")
-     .legend(|(x, y)| Circle::new((x + 5, y), 5, RED.filled()));
+    chart
+        .draw_series(
+            x_train
+                .iter()
+                .zip(y_train.iter())
+                .map(|(&x, &y)| Circle::new((x, y), 5, RED.filled())),
+        )?
+        .label("Actual Value")
+        .legend(|(x, y)| Circle::new((x + 5, y), 5, RED.filled()));
 
     // Draw prediction line
     chart
@@ -57,33 +63,46 @@ fn plot_house(x_train: &Array1<f64>, y_train: &Array1<f64>, w: f64, b: f64, file
         .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 10, y)], BLUE));
 
     // Draw dotted lines and diff values
-    chart.draw_series(
-        x_train.iter().zip(y_train.iter()).map(|(&x, &y)| {
+    chart
+        .draw_series(x_train.iter().zip(y_train.iter()).map(|(&x, &y)| {
             let y_pred = w * x + b;
             PathElement::new(
                 vec![(x, y), (x, y_pred)],
-                ShapeStyle { filled: false, color: GREEN.into(), stroke_width: 2 },
+                ShapeStyle {
+                    filled: false,
+                    color: GREEN.into(),
+                    stroke_width: 2,
+                },
             )
-        })
-    )?.label("Error (Actual-Predicted)")
-     .legend(|(x, y)| {
-         PathElement::new(
-             vec![(x + 5, y - 5), (x + 5, y + 5)],
-             ShapeStyle { filled: false, color: GREEN.into(), stroke_width: 2 },
-         )
-     });
+        }))?
+        .label("Error (Actual-Predicted)")
+        .legend(|(x, y)| {
+            PathElement::new(
+                vec![(x + 5, y - 5), (x + 5, y + 5)],
+                ShapeStyle {
+                    filled: false,
+                    color: GREEN.into(),
+                    stroke_width: 2,
+                },
+            )
+        });
 
     chart
         .configure_series_labels()
-        .background_style(&WHITE.mix(0.8))
-        .border_style(&BLACK)
+        .background_style(WHITE.mix(0.8))
+        .border_style(BLACK)
         .position(SeriesLabelPosition::UpperLeft)
         .draw()?;
-    
+
     Ok(())
 }
 
-fn plot_cost_function(x_train: &Array1<f64>, y_train: &Array1<f64>, b: f64, filename: &str) -> Result<(), Box<dyn std::error::Error>> {
+fn plot_cost_function(
+    x_train: &Array1<f64>,
+    y_train: &Array1<f64>,
+    b: f64,
+    filename: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
     let root = BitMapBackend::new(filename, (640, 480)).into_drawing_area();
     root.fill(&WHITE)?;
 
@@ -91,7 +110,7 @@ fn plot_cost_function(x_train: &Array1<f64>, y_train: &Array1<f64>, b: f64, file
     let w_end = 400.0;
     let step = 5.0;
     let mut points = Vec::new();
-    let mut min_cost = INFINITY;
+    let mut min_cost = f64::INFINITY;
     let mut min_w = w_start;
     let mut w = w_start;
     while w <= w_end {
@@ -104,15 +123,21 @@ fn plot_cost_function(x_train: &Array1<f64>, y_train: &Array1<f64>, b: f64, file
         w += step;
     }
 
-    let y_min = points.iter().map(|&(_, cost)| cost).fold(f64::INFINITY, f64::min);
-    let y_max = points.iter().map(|&(_, cost)| cost).fold(f64::NEG_INFINITY, f64::max);
+    let y_min = points
+        .iter()
+        .map(|&(_, cost)| cost)
+        .fold(f64::INFINITY, f64::min);
+    let y_max = points
+        .iter()
+        .map(|&(_, cost)| cost)
+        .fold(f64::NEG_INFINITY, f64::max);
 
     let mut chart = ChartBuilder::on(&root)
         .caption("Cost Function", ("sans-serif", 30))
         .margin(30)
         .x_label_area_size(40)
         .y_label_area_size(70)
-        .build_cartesian_2d(w_start..w_end, y_min-10000.0..y_max)?;
+        .build_cartesian_2d(w_start..w_end, y_min - 10000.0..y_max)?;
 
     chart
         .configure_mesh()
@@ -121,25 +146,24 @@ fn plot_cost_function(x_train: &Array1<f64>, y_train: &Array1<f64>, b: f64, file
         .draw()?;
 
     // Draw the minimum cost vertical line with increased width
-    chart.draw_series(std::iter::once(
-        PathElement::new(
-            vec![(min_w, y_min), (min_w, y_min - 10000.0)],
-            ShapeStyle { filled: false, color: BLACK.into(), stroke_width: 2 },
-        )
-    ))?;
+    chart.draw_series(std::iter::once(PathElement::new(
+        vec![(min_w, y_min), (min_w, y_min - 10000.0)],
+        ShapeStyle {
+            filled: false,
+            color: BLACK.into(),
+            stroke_width: 2,
+        },
+    )))?;
 
     // Show the min_w value on the x-axis
-    chart.draw_series(std::iter::once(
-        Text::new(
-            format!("min_w = {:.2}", min_w),
-            (min_w + 10.0, y_min - 3000.0),
-            ("sans-serif", 10).into_font().color(&BLACK),
-        )
-    ))?;
+    chart.draw_series(std::iter::once(Text::new(
+        format!("min_w = {:.2}", min_w),
+        (min_w + 10.0, y_min - 3000.0),
+        ("sans-serif", 10).into_font().color(&BLACK),
+    )))?;
 
     // Draw the cost function as a line
     chart.draw_series(LineSeries::new(points, &RED))?;
-
 
     Ok(())
 }
