@@ -1,16 +1,6 @@
+use lab3_cost_function::compute_cost;
 use ndarray::{Array1, array};
 use plotters::prelude::*;
-
-/// Computes the cost for linear regression
-fn compute_cost(x_train: &Array1<f64>, y_train: Array1<f64>, w: f64, b: f64) -> f64 {
-    let m = x_train.len();
-    let cost_sum: f64 = x_train
-        .iter()
-        .zip(y_train.iter())
-        .map(|(&x, &y)| (w * x + b - y).powi(2))
-        .sum();
-    cost_sum / (2 * m) as f64
-}
 
 fn plot_house(
     x_train: &Array1<f64>,
@@ -114,7 +104,7 @@ fn plot_cost_function(
     let mut min_w = w_start;
     let mut w = w_start;
     while w <= w_end {
-        let cost = compute_cost(x_train, y_train.clone(), w, b);
+        let cost = compute_cost(x_train, y_train, w, b);
         if cost < min_cost {
             min_cost = cost;
             min_w = w;
@@ -151,7 +141,7 @@ fn plot_cost_function(
         ShapeStyle {
             filled: false,
             color: BLACK.into(),
-            stroke_width: 2,
+            stroke_width: 1,
         },
     )))?;
 
