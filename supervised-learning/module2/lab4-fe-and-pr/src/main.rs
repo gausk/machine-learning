@@ -7,6 +7,7 @@ fn plot_xy_actual_predicted(
     y_actual: &Array1<f64>,
     y_predicted: &Array1<f64>,
     path: &str,
+    header: &str,
 ) {
     use plotters::prelude::*;
     let root = BitMapBackend::new(path, (640, 480)).into_drawing_area();
@@ -20,7 +21,7 @@ fn plot_xy_actual_predicted(
     );
 
     let mut chart = ChartBuilder::on(&root)
-        .caption("No Feature Engineering", ("sans-serif", 30))
+        .caption(header, ("sans-serif", 30))
         .margin(5)
         .x_label_area_size(40)
         .y_label_area_size(60)
@@ -89,6 +90,7 @@ fn main() {
         &y_train,
         &y_predicted,
         "plot_no_feature_engineering.png",
+        "No feature Engineering",
     );
 
     // Feature engineering: create (20, 3) array with columns [x, x^2, x^3]
@@ -112,6 +114,7 @@ fn main() {
         &y_train,
         &y_predicted_fe,
         "plot_with_feature_engineering.png",
+        "Feature Engineering with x, x^2 and x^3",
     );
 
     // feature engineering and normalization
@@ -134,6 +137,7 @@ fn main() {
         &y_train,
         &y_predicted_fe,
         "plot_with_feature_engineering_and_normalization.png",
+        "Feature Engineering and Normalization",
     );
 
     // complex function
@@ -179,5 +183,6 @@ fn main() {
         &y_complex,
         &y_predicted_complex,
         "plot_with_complex_feature_engineering.png",
+        "Feature Engineering for cos(x/2) function",
     );
 }
