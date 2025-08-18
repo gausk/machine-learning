@@ -1,0 +1,183 @@
+use lab2_mvlr::gradient_descent;
+use lab3_fs_and_lr::zscore_normalize_features;
+use ndarray::{Array1, Array2, Axis};
+
+fn plot_xy_actual_predicted(
+    x: &Array1<f64>,
+    y_actual: &Array1<f64>,
+    y_predicted: &Array1<f64>,
+    path: &str,
+) {
+    use plotters::prelude::*;
+    let root = BitMapBackend::new(path, (640, 480)).into_drawing_area();
+    root.fill(&WHITE).unwrap();
+
+    let x_min = x.iter().cloned().fold(f64::INFINITY, f64::min);
+    let x_max = x.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+    let (y_min, y_max) = y_actual.iter().zip(y_predicted.iter()).fold(
+        (f64::INFINITY, f64::NEG_INFINITY),
+        |(min, max), (&a, &p)| (min.min(a.min(p)), max.max(a.max(p))),
+    );
+
+    let mut chart = ChartBuilder::on(&root)
+        .caption("No Feature Engineering", ("sans-serif", 30))
+        .margin(5)
+        .x_label_area_size(40)
+        .y_label_area_size(60)
+        .build_cartesian_2d(x_min..x_max, y_min..y_max)
+        .unwrap();
+
+    chart
+        .configure_mesh()
+        .x_desc("x")
+        .y_desc("y")
+        .y_label_offset(40)
+        .label_style(("sans-serif", 15))
+        .draw()
+        .unwrap();
+
+    chart
+        .draw_series(LineSeries::new(
+            x.iter().zip(y_actual.iter()).map(|(x, y)| (*x, *y)),
+            ShapeStyle {
+                color: RED.mix(1.0),
+                filled: false,
+                stroke_width: 3,
+            },
+        ))
+        .unwrap()
+        .label("Actual")
+        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 8, y)], RED));
+
+    chart
+        .draw_series(LineSeries::new(
+            x.iter().zip(y_predicted.iter()).map(|(x, y)| (*x, *y)),
+            ShapeStyle {
+                color: BLUE.mix(1.0),
+                filled: false,
+                stroke_width: 3,
+            },
+        ))
+        .unwrap()
+        .label("Predicted")
+        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 8, y)], BLUE));
+
+    chart
+        .configure_series_labels()
+        .border_style(BLACK)
+        .draw()
+        .unwrap();
+}
+
+fn main() {
+    let x: Array1<f64> = Array1::from_iter(ndarray::range(0.0, 20.0, 1.0));
+    let y_train = x.mapv(|x| 1.0 + x.powi(2));
+    let x_train = x.clone().insert_axis(Axis(1)).to_owned();
+    println!("{}", y_train);
+
+    let initial_w = Array1::zeros(x_train.shape()[1]);
+    let initial_b = 0.;
+
+    // using only x as feature
+    let (model_w, model_b, _j_history) =
+        gradient_descent(&x_train, &y_train, &initial_w, initial_b, 1e-2, 1000);
+    println!("No feature engineering w: {}, b: {}", model_w, model_b);
+    let y_predicted = x_train.dot(&model_w) + model_b;
+
+    plot_xy_actual_predicted(
+        &x,
+        &y_train,
+        &y_predicted,
+        "plot_no_feature_engineering.png",
+    );
+
+    // Feature engineering: create (20, 3) array with columns [x, x^2, x^3]
+    let data: Vec<f64> = x
+        .iter()
+        .flat_map(|&v| vec![v, v.powi(2), v.powi(3)])
+        .collect();
+
+    let x_train_fe = Array2::from_shape_vec((x.len(), 3), data).unwrap();
+    let initial_w = Array1::zeros(x_train_fe.shape()[1]);
+    let (model_w_fe, model_b_fe, _j_history_fe) =
+        gradient_descent(&x_train_fe, &y_train, &initial_w, initial_b, 1e-7, 10000);
+    println!(
+        "With feature engineering w: {}, b: {}",
+        model_w_fe, model_b_fe
+    );
+    let y_predicted_fe = x_train_fe.dot(&model_w_fe) + model_b_fe;
+
+    plot_xy_actual_predicted(
+        &x,
+        &y_train,
+        &y_predicted_fe,
+        "plot_with_feature_engineering.png",
+    );
+
+    // feature engineering and normalization
+    let (x_norm_fe, mu, sigma) = zscore_normalize_features(&x_train_fe);
+    println!(
+        "Feature engineering and normalization mu: {}, sigma: {}",
+        mu, sigma
+    );
+
+    let (model_w_fe, model_b_fe, _j_history_fe) =
+        gradient_descent(&x_norm_fe, &y_train, &initial_w, initial_b, 1e-1, 10000);
+    println!(
+        "With feature engineering and normalization w: {}, b: {}",
+        model_w_fe, model_b_fe
+    );
+    let y_predicted_fe = x_norm_fe.dot(&model_w_fe) + model_b_fe;
+
+    plot_xy_actual_predicted(
+        &x,
+        &y_train,
+        &y_predicted_fe,
+        "plot_with_feature_engineering_and_normalization.png",
+    );
+
+    // complex function
+    let y_complex = x.mapv(|x| (x / 2.0).cos());
+    let data: Vec<f64> = x
+        .iter()
+        .flat_map(|&v| {
+            vec![
+                v,
+                v.powi(2),
+                v.powi(3),
+                v.powi(4),
+                v.powi(5),
+                v.powi(6),
+                v.powi(7),
+                v.powi(8),
+                v.powi(9),
+            ]
+        })
+        .collect();
+
+    let x_train_complex = Array2::from_shape_vec((x.len(), 9), data).unwrap();
+    let (x_norm_complex_fe, mu, sigma) = zscore_normalize_features(&x_train_complex);
+    println!("Complex feature normalization mu: {}, sigma: {}", mu, sigma);
+
+    let initial_w = Array1::zeros(x_train_complex.shape()[1]);
+    let (model_w_complex, model_b_complex, _j_history_complex) = gradient_descent(
+        &x_norm_complex_fe,
+        &y_complex,
+        &initial_w,
+        initial_b,
+        1e-1,
+        1000000,
+    );
+    println!(
+        "With complex feature engineering w: {}, b: {}",
+        model_w_complex, model_b_complex
+    );
+    let y_predicted_complex = x_norm_complex_fe.dot(&model_w_complex) + model_b_complex;
+
+    plot_xy_actual_predicted(
+        &x,
+        &y_complex,
+        &y_predicted_complex,
+        "plot_with_complex_feature_engineering.png",
+    );
+}

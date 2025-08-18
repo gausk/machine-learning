@@ -6,7 +6,8 @@ members = [
     "supervised-learning/module1/lab4-gradient-descent",
     "supervised-learning/module2/lab1-vectorization",
     "supervised-learning/module2/lab2-mvlr",
-    "supervised-learning/module2/lab3-fs-and-lr"
+    "supervised-learning/module2/lab3-fs-and-lr",
+    "supervised-learning/module2/lab4-fe-and-pr"
 ]
 resolver = "3"
 

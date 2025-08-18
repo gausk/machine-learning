@@ -434,6 +434,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab4-fe-and-pr"
+version = "0.1.0"
+dependencies = [
+ "lab2-mvlr",
+ "lab3-fs-and-lr",
+ "ndarray",
+ "plotters",
+]
+
+[[package]]
 name = "lab4-gradient-descent"
 version = "0.1.0"
 dependencies = [
