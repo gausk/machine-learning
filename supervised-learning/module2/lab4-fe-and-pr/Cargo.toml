@@ -6,7 +6,7 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
-ndarray = "*"
+ndarray = { workspace = true }
 plotters = "*"
 lab2-mvlr = { path = "../lab2-mvlr" }
 lab3-fs-and-lr = { path = "../lab3-fs-and-lr" }
