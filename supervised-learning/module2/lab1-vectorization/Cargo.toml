@@ -7,5 +7,5 @@ description.workspace = true
 
 [dependencies]
 ndarray = { workspace = true }
-ndarray-rand = "*"
-rand = "*"
+ndarray-rand = "0.14"
+rand = "0.8"

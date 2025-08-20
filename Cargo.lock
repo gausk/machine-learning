@@ -62,7 +62,7 @@ checksum = "a8798ca7447753fcb3dd98d9095335b1564812a68c6e7c3d1926e1d5cf094e37"
 dependencies = [
  "anyhow",
  "cfg-if",
- "ndarray 0.15.6",
+ "ndarray",
  "num-complex",
  "num-integer",
  "num-traits",
@@ -448,10 +448,20 @@ name = "l1-intro"
 version = "0.1.0"
 
 [[package]]
+name = "lab1-classification"
+version = "0.1.0"
+dependencies = [
+ "lab4-fe-and-pr",
+ "linfa",
+ "linfa-linear",
+ "ndarray",
+]
+
+[[package]]
 name = "lab1-vectorization"
 version = "0.1.0"
 dependencies = [
- "ndarray 0.15.6",
+ "ndarray",
  "ndarray-rand",
  "rand",
 ]
@@ -460,7 +470,7 @@ dependencies = [
 name = "lab2-model-representation"
 version = "0.1.0"
 dependencies = [
- "ndarray 0.16.1",
+ "ndarray",
  "plotters",
 ]
 
@@ -468,7 +478,7 @@ dependencies = [
 name = "lab2-mvlr"
 version = "0.1.0"
 dependencies = [
- "ndarray 0.15.6",
+ "ndarray",
  "plotters",
 ]
 
@@ -476,7 +486,7 @@ dependencies = [
 name = "lab3-cost-function"
 version = "0.1.0"
 dependencies = [
- "ndarray 0.16.1",
+ "ndarray",
  "plotters",
 ]
 
@@ -486,7 +496,7 @@ version = "0.1.0"
 dependencies = [
  "csv",
  "lab2-mvlr",
- "ndarray 0.15.6",
+ "ndarray",
 ]
 
 [[package]]
@@ -495,7 +505,7 @@ version = "0.1.0"
 dependencies = [
  "lab2-mvlr",
  "lab3-fs-and-lr",
- "ndarray 0.15.6",
+ "ndarray",
  "plotters",
 ]
 
@@ -504,7 +514,7 @@ name = "lab4-gradient-descent"
 version = "0.1.0"
 dependencies = [
  "lab3-cost-function",
- "ndarray 0.16.1",
+ "ndarray",
  "plotters",
 ]
 
@@ -516,7 +526,7 @@ dependencies = [
  "lab4-fe-and-pr",
  "linfa",
  "linfa-linear",
- "ndarray 0.15.6",
+ "ndarray",
 ]
 
 [[package]]
@@ -564,7 +574,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56f9097edc7c89d03d526efbacf6d90914e3a8fa53bd56c2d1489e3a90819370"
 dependencies = [
  "approx",
- "ndarray 0.15.6",
+ "ndarray",
  "num-traits",
  "rand",
  "sprs",
@@ -577,7 +587,7 @@ version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56e7562b41c8876d3367897067013bb2884cc78e6893f092ecd26b305176ac82"
 dependencies = [
- "ndarray 0.15.6",
+ "ndarray",
  "num-traits",
  "thiserror 1.0.69",
 ]
@@ -592,7 +602,7 @@ dependencies = [
  "argmin-math",
  "linfa",
  "linfa-linalg",
- "ndarray 0.15.6",
+ "ndarray",
  "num-traits",
  "thiserror 1.0.69",
 ]
@@ -644,27 +654,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "ndarray"
-version = "0.16.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "882ed72dce9365842bf196bdeedf5055305f11fc8c03dee7bb0194a6cad34841"
-dependencies = [
- "matrixmultiply",
- "num-complex",
- "num-integer",
- "num-traits",
- "portable-atomic",
- "portable-atomic-util",
- "rawpointer",
-]
-
-[[package]]
 name = "ndarray-rand"
-version = "0.15.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f093b3db6fd194718dcdeea6bd8c829417deae904e3fcc7732dabcd4416d25d8"
+checksum = "65608f937acc725f5b164dcf40f4f0bc5d67dc268ab8a649d3002606718c4588"
 dependencies = [
- "ndarray 0.16.1",
+ "ndarray",
  "rand",
  "rand_distr",
 ]
@@ -797,21 +792,6 @@ dependencies = [
  "fdeflate",
  "flate2",
  "miniz_oxide",
-]
-
-[[package]]
-name = "portable-atomic"
-version = "1.11.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f84267b20a16ea918e43c6a88433c2d54fa145c92a811b5b047ccbe153674483"
-
-[[package]]
-name = "portable-atomic-util"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8a2f0d8d040d7848a709caf78912debcc3f33ee4b3cac47d73d1e1069e83507"
-dependencies = [
- "portable-atomic",
 ]
 
 [[package]]
@@ -987,7 +967,7 @@ version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "88bab60b0a18fb9b3e0c26e92796b3c3a278bf5fa4880f5ad5cc3bdfb843d0b1"
 dependencies = [
- "ndarray 0.15.6",
+ "ndarray",
  "num-complex",
  "num-traits",
  "smallvec",

@@ -4,7 +4,7 @@ use lab4_fe_and_pr::plot_xy_actual_predicted;
 use ndarray::{Array1, Array2, Axis};
 
 fn main() {
-    let x: Array1<f64> = Array1::from_iter(ndarray::range(0.0, 20.0, 1.0));
+    let x: Array1<f64> = Array1::range(0.0, 20.0, 1.0);
     let y_train = x.mapv(|x| 1.0 + x.powi(2));
     let x_train = x.clone().insert_axis(Axis(1)).to_owned();
     println!("{}", y_train);

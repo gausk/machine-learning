@@ -8,7 +8,8 @@ members = [
     "supervised-learning/module2/lab2-mvlr",
     "supervised-learning/module2/lab3-fs-and-lr",
     "supervised-learning/module2/lab4-fe-and-pr",
-    "supervised-learning/module2/lab5-sklearn"
+    "supervised-learning/module2/lab5-sklearn",
+    "supervised-learning/module3/lab1-classification"
 ]
 resolver = "3"
 

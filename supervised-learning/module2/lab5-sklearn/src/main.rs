@@ -39,7 +39,7 @@ fn main() {
 
     let mse = calculate_mse(&y_train, &predictions);
     println!("Mean Squared Error: {:.6}", mse);
-    println!("\nModel Parameters after normalization:");
+    println!("\nModel Parameters:");
     println!("Intercept:  {}", model.intercept());
     println!("Parameters: {}", model.params());
 
@@ -67,7 +67,7 @@ fn main() {
     );
 
     // Calculate and print MSE
-    let mse = calculate_mse(&y_train, &predictions);
+    let mse = calculate_mse(dataset.targets(), &predictions);
 
     println!("Normalized Mean Squared Error: {:.6}", mse);
     println!("\nModel Parameters after normalization:");
