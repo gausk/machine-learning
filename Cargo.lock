@@ -483,6 +483,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab2-sigmoid"
+version = "0.1.0"
+dependencies = [
+ "lab4-fe-and-pr",
+ "ndarray",
+ "plotters",
+]
+
+[[package]]
 name = "lab3-cost-function"
 version = "0.1.0"
 dependencies = [
