@@ -12,7 +12,8 @@ members = [
     "supervised-learning/module3/lab1-classification",
     "supervised-learning/module3/lab2-sigmoid",
     "supervised-learning/module3/lab3-decision-boundary",
-    "supervised-learning/module3/lab4-logistic-loss"
+    "supervised-learning/module3/lab4-logistic-loss",
+    "supervised-learning/module3/lab5-cost-function"
 ]
 resolver = "3"
 

@@ -1680,6 +1680,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab5-cost-function"
+version = "0.1.0"
+dependencies = [
+ "lab2-sigmoid",
+ "ndarray",
+]
+
+[[package]]
 name = "lab5-sklearn"
 version = "0.1.0"
 dependencies = [
