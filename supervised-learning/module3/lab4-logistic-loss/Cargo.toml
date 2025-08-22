@@ -1,0 +1,11 @@
+[package]
+name = "lab4-logistic-loss"
+version = "0.1.0"
+edition.workspace = true
+authors.workspace = true
+description.workspace = true
+
+[dependencies]
+plotly = { version = "0.13", features = ["static_export_default"] }
+ndarray = "*"
+lab2-sigmoid = { path = "../lab2-sigmoid" }
