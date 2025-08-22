@@ -16,9 +16,11 @@ jobs:
     steps:
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y libfontconfig1-dev curl && curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb && sudo apt install -y /tmp/chrome.deb
-     - name: Install chrome
-       run: curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb && sudo apt install -y /tmp/chrome.deb
-     - name: Checkout code
+
+      - name: Install chrome
+        run: curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb && sudo apt install -y /tmp/chrome.deb
+
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Check formatting
