@@ -1,7 +1,6 @@
-use ndarray::array;
-use linfa_logistic::LogisticRegression;
 use linfa::prelude::*;
-
+use linfa_logistic::LogisticRegression;
+use ndarray::array;
 
 fn main() {
     let x = array![

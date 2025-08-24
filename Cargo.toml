@@ -15,7 +15,10 @@ members = [
     "supervised-learning/module3/lab4-logistic-loss",
     "supervised-learning/module3/lab5-cost-function",
     "supervised-learning/module3/lab6-gradient-descent", 
-    "supervised-learning/module3/lab7-linfa-logistic-regression"
+    "supervised-learning/module3/lab7-linfa-logistic-regression",
+    "supervised-learning/module3/lab8-overfitting",
+    "supervised-learning/module3/lab9-regularization",
+    "supervised-learning/module3/practice-w3-logistic-regression",
 ]
 resolver = "3"
 

@@ -1725,6 +1725,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab8-overfitting"
+version = "0.1.0"
+
+[[package]]
+name = "lab9-regularization"
+version = "0.1.0"
+dependencies = [
+ "lab2-mvlr",
+ "lab2-sigmoid",
+ "ndarray",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2390,6 +2403,10 @@ checksum = "85eae3c4ed2f50dcfe72643da4befc30deadb458a9b590d720cde2f2b1e97da9"
 dependencies = [
  "zerocopy",
 ]
+
+[[package]]
+name = "practice-w3-logistic-regression"
+version = "0.1.0"
 
 [[package]]
 name = "proc-macro2"
