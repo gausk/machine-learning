@@ -7,7 +7,7 @@ pub fn sigmoid_function(x: f64) -> f64 {
 
 pub fn sigmoid(x: &Array1<f64>) -> Array1<f64> {
     x.mapv(|x| {
-        let x_clamped = x.clamp(-500.0, 500.0);
+        let x_clamped = x.clamp(-5000.0, 5000.0);
         sigmoid_function(x_clamped)
     })
 }

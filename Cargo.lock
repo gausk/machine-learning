@@ -2407,6 +2407,12 @@ dependencies = [
 [[package]]
 name = "practice-w3-logistic-regression"
 version = "0.1.0"
+dependencies = [
+ "csv",
+ "lab2-sigmoid",
+ "lab9-regularization",
+ "ndarray",
+]
 
 [[package]]
 name = "proc-macro2"

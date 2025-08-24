@@ -1,9 +1,12 @@
-use csv::Reader;
+use csv::ReaderBuilder;
 use ndarray::Axis;
 use ndarray::{Array1, Array2};
 
 pub fn load_house_data(path: &str) -> (Array2<f64>, Array1<f64>) {
-    let mut rdr = Reader::from_path(path).unwrap();
+    let mut rdr = ReaderBuilder::new()
+        .has_headers(false)
+        .from_path(path)
+        .unwrap();
     let mut x = Vec::new();
     let mut y = Vec::new();
 

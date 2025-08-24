@@ -51,3 +51,24 @@ pub fn gradient_linear_regularization(
     let reg_dw = dw + &(w.mapv(|wi| wi * (lambda / m)));
     (reg_dw, db)
 }
+
+pub fn train_logistic_regression_regularization(
+    x: &Array2<f64>,
+    y: &Array1<f64>,
+    initial_w: &Array1<f64>,
+    initial_b: f64,
+    alpha: f64,
+    num_iters: usize,
+    lambda: f64,
+) -> (Array1<f64>, f64) {
+    let mut w = initial_w.clone();
+    let mut b = initial_b;
+
+    for _ in 0..num_iters {
+        let (dj_dw, dj_db) = gradient_logistic_regularization(x, y, &w, b, lambda);
+        w = &w - &(alpha * &dj_dw);
+        b -= alpha * dj_db;
+    }
+
+    (w, b)
+}
