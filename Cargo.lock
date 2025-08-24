@@ -1547,6 +1547,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "itertools"
+version = "0.10.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
+dependencies = [
+ "either",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1699,6 +1708,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab6-gradient-descent"
+version = "0.1.0"
+dependencies = [
+ "lab2-sigmoid",
+ "ndarray",
+]
+
+[[package]]
+name = "lab7-linfa-logistic-regression"
+version = "0.1.0"
+dependencies = [
+ "linfa",
+ "linfa-logistic",
+ "ndarray",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1842,6 +1868,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "linfa-logistic"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0999b10c6809fe8fd1e22bfc898b7901ec61947b260517ca1d4f6d90524d3df9"
+dependencies = [
+ "argmin",
+ "argmin-math",
+ "linfa",
+ "ndarray",
+ "ndarray-stats",
+ "num-traits",
+ "thiserror 1.0.69",
+]
+
+[[package]]
 name = "linux-raw-sys"
 version = "0.4.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1967,6 +2008,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "ndarray-stats"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af5a8477ac96877b5bd1fd67e0c28736c12943aba24eda92b127e036b0c8f400"
+dependencies = [
+ "indexmap 1.9.3",
+ "itertools",
+ "ndarray",
+ "noisy_float",
+ "num-integer",
+ "num-traits",
+ "rand 0.8.5",
+]
+
+[[package]]
 name = "nix"
 version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1975,6 +2031,15 @@ dependencies = [
  "bitflags 2.9.2",
  "cfg-if",
  "libc",
+]
+
+[[package]]
+name = "noisy_float"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "978fe6e6ebc0bf53de533cd456ca2d9de13de13856eda1518a285d7705a213af"
+dependencies = [
+ "num-traits",
 ]
 
 [[package]]

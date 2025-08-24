@@ -10,6 +10,8 @@ This repository contains Rust implementations of all labs from the [Machine Lear
 
 #### Module 2: Regression with Multiple Input Variables
 
+#### Module 3: Classification
+
 ## Acknowledgements
 This project is inspired by the Machine Learning course by Andrew Ng on Coursera. The implementations are designed to help learners understand the concepts of machine learning through practical coding exercises in Rust.
 
