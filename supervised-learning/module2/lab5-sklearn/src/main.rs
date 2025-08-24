@@ -1,4 +1,4 @@
-use lab3_fs_and_lr::load_house_data;
+use lab3_fs_and_lr::load_data;
 use lab4_fe_and_pr::plot_xy_actual_predicted;
 use linfa::Dataset;
 use linfa::prelude::*;
@@ -20,7 +20,7 @@ fn calculate_mse(actual: &Array1<f64>, predicted: &Array1<f64>) -> f64 {
 fn main() {
     // Normal flow
     let data_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/house.txt");
-    let (x_train, y_train) = load_house_data(data_path.to_str().unwrap());
+    let (x_train, y_train) = load_data(data_path.to_str().unwrap(), 4);
 
     // Create a proper Dataset combining features (x_train) and targets (y_train)
     let dataset = Dataset::new(x_train.clone(), y_train.clone());

@@ -2405,6 +2405,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "practice-w2-linear-regression"
+version = "0.1.0"
+dependencies = [
+ "lab2-mvlr",
+ "lab3-fs-and-lr",
+ "ndarray",
+]
+
+[[package]]
 name = "practice-w3-logistic-regression"
 version = "0.1.0"
 dependencies = [

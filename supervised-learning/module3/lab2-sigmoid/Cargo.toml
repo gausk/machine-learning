@@ -6,6 +6,6 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
+lab4-fe-and-pr = { path = "../../module2/lab4-fe-and-pr" }
 ndarray = { workspace = true }
 plotters = "*"
-lab4-fe-and-pr = { path = "../../module2/lab4-fe-and-pr" }

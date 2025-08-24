@@ -6,6 +6,6 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
+lab3-cost-function = { path = "../lab3-cost-function" }
 ndarray = { workspace = true }
 plotters = "*"
-lab3-cost-function = { path = "../lab3-cost-function" }

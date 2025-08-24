@@ -7,6 +7,6 @@ description.workspace = true
 
 [dependencies]
 csv = "*"
-ndarray = { workspace = true }
 lab2-sigmoid = { path = "../lab2-sigmoid" }
 lab9-regularization = { path = "../lab9-regularization" }
+ndarray = { workspace = true }

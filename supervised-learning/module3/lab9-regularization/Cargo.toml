@@ -6,6 +6,6 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
-ndarray = { workspace = true }
-lab2-sigmoid = { path = "../lab2-sigmoid" }
 lab2-mvlr = { path = "../../module2/lab2-mvlr" }
+lab2-sigmoid = { path = "../lab2-sigmoid" }
+ndarray = { workspace = true }

@@ -42,8 +42,7 @@ pub fn map_feature(x1: &Array1<f64>, x2: &Array1<f64>) -> Array2<f64> {
     for i in 1..=degree {
         for j in 0..=i {
             // (x1^(i-j)) * (x2^j)
-            let col: Array1<f64> =
-                x1.mapv(|v| v.powi(i - j)) * x2.mapv(|v| v.powi(j));
+            let col: Array1<f64> = x1.mapv(|v| v.powi(i - j)) * x2.mapv(|v| v.powi(j));
             features.push(col);
         }
     }

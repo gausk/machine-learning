@@ -1,5 +1,5 @@
 [package]
-name = "lab4-fe-and-pr"
+name = "practice-w2-linear-regression"
 version = "0.1.0"
 edition.workspace = true
 authors.workspace = true
@@ -9,4 +9,3 @@ description.workspace = true
 lab2-mvlr = { path = "../lab2-mvlr" }
 lab3-fs-and-lr = { path = "../lab3-fs-and-lr" }
 ndarray = { workspace = true }
-plotters = "*"

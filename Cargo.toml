@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "supervised-learning/module1/l1-intro",
-    "supervised-learning/module1/lab2-model-representation", 
+    "supervised-learning/module1/lab2-model-representation",
     "supervised-learning/module1/lab3-cost-function",
     "supervised-learning/module1/lab4-gradient-descent",
     "supervised-learning/module2/lab1-vectorization",
@@ -9,12 +9,13 @@ members = [
     "supervised-learning/module2/lab3-fs-and-lr",
     "supervised-learning/module2/lab4-fe-and-pr",
     "supervised-learning/module2/lab5-sklearn",
+    "supervised-learning/module2/practice-w2-linear-regression",
     "supervised-learning/module3/lab1-classification",
     "supervised-learning/module3/lab2-sigmoid",
     "supervised-learning/module3/lab3-decision-boundary",
     "supervised-learning/module3/lab4-logistic-loss",
     "supervised-learning/module3/lab5-cost-function",
-    "supervised-learning/module3/lab6-gradient-descent", 
+    "supervised-learning/module3/lab6-gradient-descent",
     "supervised-learning/module3/lab7-linfa-logistic-regression",
     "supervised-learning/module3/lab8-overfitting",
     "supervised-learning/module3/lab9-regularization",

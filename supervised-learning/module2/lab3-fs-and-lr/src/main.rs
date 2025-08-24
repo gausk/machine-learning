@@ -1,12 +1,12 @@
 use lab2_mvlr::{gradient_descent, plot_cost_function_by_iterations};
-use lab3_fs_and_lr::{load_house_data, zscore_normalize_features};
+use lab3_fs_and_lr::{load_data, zscore_normalize_features};
 use ndarray::Array1;
 use ndarray::Axis;
 use std::path::Path;
 
 fn main() {
     let data_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/house.txt");
-    let (x_train, y_train) = load_house_data(data_path.to_str().unwrap());
+    let (x_train, y_train) = load_data(data_path.to_str().unwrap(), 4);
     println!(
         "Loaded training data with {} samples and {} features.",
         x_train.shape()[0],

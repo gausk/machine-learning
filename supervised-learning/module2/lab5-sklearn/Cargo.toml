@@ -6,8 +6,8 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
-linfa = "0.7.0"
-linfa-linear = "0.7.0"
 lab3-fs-and-lr = { path = "../lab3-fs-and-lr" }
 lab4-fe-and-pr = { path = "../lab4-fe-and-pr" }
+linfa = "0.7.0"
+linfa-linear = "0.7.0"
 ndarray = { workspace = true }
