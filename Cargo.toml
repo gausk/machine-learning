@@ -1,5 +1,6 @@
 [workspace]
-members = [
+members = [ 
+    "advanced-learning-algorithms/module1/lab1-neuron-and-layers",
     "supervised-learning/module1/l1-intro",
     "supervised-learning/module1/lab2-model-representation",
     "supervised-learning/module1/lab3-cost-function",
