@@ -3520,6 +3520,8 @@ name = "lab1-neuron-and-layers"
 version = "0.1.0"
 dependencies = [
  "burn",
+ "burn-ndarray",
+ "serde",
 ]
 
 [[package]]

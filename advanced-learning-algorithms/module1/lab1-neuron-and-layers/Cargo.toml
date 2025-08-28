@@ -7,3 +7,5 @@ description.workspace = true
 
 [dependencies]
 burn = { version = "0.18.0" }
+serde = "1.0"
+burn-ndarray = "0.18"
