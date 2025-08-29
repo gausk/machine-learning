@@ -3,12 +3,11 @@ use burn::nn::{
     Linear, LinearConfig,
     loss::{MseLoss, Reduction},
 };
-use burn::optim::{AdamConfig, Optimizer};
+use burn::optim::{AdamConfig, GradientsParams, Optimizer};
 use burn::prelude::*;
 use burn::tensor::activation::{relu, sigmoid, tanh};
 use burn::tensor::backend::AutodiffBackend;
 use serde::{Deserialize, Serialize};
-use burn::LearningRate;
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize, Module)]
 pub enum Activation {
@@ -63,24 +62,32 @@ impl<B: Backend> NeuralNetwork<B> {
         }
         x
     }
+}
 
-    pub fn train(
-        mut self,
-        x: Tensor<B, 2>,
-        y: Tensor<B, 2>,
-        epochs: usize,
-        learning_rate: f64,
-    ) -> Self {
-        //let mut optim = AdamConfig::new().init();
-        let loss_fn = MseLoss::new();
-        //let lr = LearningRate::new(learning_rate);
-        for epoch in 0..epochs {
-            let preds = self.forward(x.clone());
-            let loss = loss_fn.forward(preds, y.clone(), Reduction::Mean);
-            //let grads = B::backward(loss.clone());
-           // self = optim.step(lr, self, grads); // Correct argument order and types
-            println!("Epoch {epoch}, Loss: {:?}", loss.into_data());
+// Separate training function that works with autodiff backend
+pub fn train_model<B: AutodiffBackend>(
+    mut model: NeuralNetwork<B>,
+    x: Tensor<B, 2>,
+    y: Tensor<B, 2>,
+    epochs: usize,
+    learning_rate: f64,
+) -> NeuralNetwork<B> {
+    let mut optimizer = AdamConfig::new().init();
+    let loss_fn = MseLoss::new();
+    
+    println!("Starting training...");
+    for epoch in 0..epochs {
+        let preds = model.forward(x.clone());
+        let loss = loss_fn.forward(preds, y.clone(), Reduction::Mean);
+        
+        if epoch % 100 == 0 {
+            println!("Epoch {}: Loss = {:.6}", epoch, loss.clone().into_scalar());
         }
-        self
+        
+        let grads = loss.backward();
+        let grads = GradientsParams::from_grads(grads, &model);
+        model = optimizer.step(learning_rate, model, grads);
     }
+    
+    model
 }
