@@ -74,20 +74,20 @@ pub fn train_model<B: AutodiffBackend>(
 ) -> NeuralNetwork<B> {
     let mut optimizer = AdamConfig::new().init();
     let loss_fn = MseLoss::new();
-    
+
     println!("Starting training...");
     for epoch in 0..epochs {
         let preds = model.forward(x.clone());
         let loss = loss_fn.forward(preds, y.clone(), Reduction::Mean);
-        
-        if epoch % 100 == 0 {
+
+        if epoch % 1000 == 0 {
             println!("Epoch {}: Loss = {:.6}", epoch, loss.clone().into_scalar());
         }
-        
+
         let grads = loss.backward();
         let grads = GradientsParams::from_grads(grads, &model);
         model = optimizer.step(learning_rate, model, grads);
     }
-    
+
     model
 }
