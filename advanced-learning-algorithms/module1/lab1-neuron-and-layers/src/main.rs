@@ -20,6 +20,8 @@ fn main() {
     let y_pred = trained_network.forward(x);
     println!("Expected: {}", y.to_data());
     println!("Predicted: {}", y_pred.to_data());
+    println!("Model Parameters:");
+    trained_network.parameters();
 
     // Example with sigmoid layer
     println!("\n--- Single Neuron with Sigmoid ---");
@@ -36,4 +38,6 @@ fn main() {
     let y_pred_sigmoid = trained_sigmoid_network.forward(x);
     println!("Expected: {}", y.to_data());
     println!("Predicted: {:.2}", y_pred_sigmoid.to_data());
+    println!("Model Parameters:");
+    trained_sigmoid_network.parameters();
 }

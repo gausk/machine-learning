@@ -62,6 +62,20 @@ impl<B: Backend> NeuralNetwork<B> {
         }
         x
     }
+
+    pub fn parameters(&self) {
+        for (i, layer) in self.layers.iter().enumerate() {
+            println!(
+                "Layer {}: Weights: {}, Bias: {}",
+                i + 1,
+                layer.linear.weight.to_data(),
+                match &layer.linear.bias {
+                    Some(b) => b.to_data().to_string(),
+                    None => "None".to_string(),
+                }
+            );
+        }
+    }
 }
 
 // Separate training function that works with autodiff backend
