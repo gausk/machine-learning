@@ -20,12 +20,12 @@ pub enum Activation {
 }
 
 #[derive(Module, Debug)]
-pub struct Layer<B: AutodiffBackend> {
+pub struct Layer<B: Backend> {
     linear: Linear<B>,
     activation: Activation,
 }
 
-impl<B: AutodiffBackend> Layer<B> {
+impl<B: Backend> Layer<B> {
     pub fn new(
         input_size: usize,
         output_size: usize,
@@ -48,11 +48,11 @@ impl<B: AutodiffBackend> Layer<B> {
 }
 
 #[derive(Module, Debug)]
-pub struct NeuralNetwork<B: AutodiffBackend> {
+pub struct NeuralNetwork<B: Backend> {
     layers: Vec<Layer<B>>,
 }
 
-impl<B: AutodiffBackend> NeuralNetwork<B> {
+impl<B: Backend> NeuralNetwork<B> {
     pub fn new(layers: Vec<Layer<B>>) -> Self {
         Self { layers }
     }
@@ -66,19 +66,19 @@ impl<B: AutodiffBackend> NeuralNetwork<B> {
 
     pub fn train(
         mut self,
-        mut optim: impl Optimizer<AdamConfig, B>,
         x: Tensor<B, 2>,
         y: Tensor<B, 2>,
         epochs: usize,
         learning_rate: f64,
     ) -> Self {
+        //let mut optim = AdamConfig::new().init();
         let loss_fn = MseLoss::new();
-        let lr = LearningRate::new(learning_rate);
+        //let lr = LearningRate::new(learning_rate);
         for epoch in 0..epochs {
             let preds = self.forward(x.clone());
             let loss = loss_fn.forward(preds, y.clone(), Reduction::Mean);
-            let grads = B::backward(loss.clone());
-            self = optim.step(lr, self, grads); // Correct argument order and types
+            //let grads = B::backward(loss.clone());
+           // self = optim.step(lr, self, grads); // Correct argument order and types
             println!("Epoch {epoch}, Loss: {:?}", loss.into_data());
         }
         self

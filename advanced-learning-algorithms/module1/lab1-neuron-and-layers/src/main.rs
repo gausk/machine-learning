@@ -10,8 +10,11 @@ fn main() {
 
     let layer_linear: Layer<NdArray> = Layer::new(1, 1, Activation::None, &device);
     let network = NeuralNetwork::new(vec![layer_linear]);
-    let y_pred = network.forward(x);
+    let y = Tensor::from_floats([[300.0], [400.0]], &device);
+    let trained_network = network.train(x.clone(), y, 100, 0.01);
+    let y_pred = trained_network.forward(x);
     println!("Output Linear: {:?}", y_pred);
+
 
     //let layer_sigmoid: Layer<NdArray> = Layer::new(2, 2, Activation::None, &device);
 }
