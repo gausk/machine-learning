@@ -6,6 +6,6 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
-burn = { version = "0.18.0", features = ["autodiff"] }
+burn = { version = "0.18.0", features = ["autodiff", "train"] }
 serde = "1.0"
 burn-ndarray = "0.18"
