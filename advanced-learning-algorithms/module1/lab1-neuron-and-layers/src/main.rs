@@ -36,8 +36,7 @@ fn main() {
     ];
     train_model(
         "artifacts/sigmoid",
-        TrainingConfig::new(AdamConfig::new())
-            .with_num_epochs(100000),
+        TrainingConfig::new(AdamConfig::new()).with_num_epochs(100000),
         vec![layer_sigmoid],
         device,
         data,
