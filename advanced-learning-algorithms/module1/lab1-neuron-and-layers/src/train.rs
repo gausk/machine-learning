@@ -60,7 +60,7 @@ pub fn train_model<B: AutodiffBackend + Backend>(
     layers: Vec<Layer<B>>,
     device: B::Device,
     data: Vec<SampleData>,
-) {
+) -> NeuralNetwork<B> {
     create_artifacts_directory(artifact_dir);
     config
         .save(format!("{artifact_dir}/config.json"))
@@ -99,6 +99,9 @@ pub fn train_model<B: AutodiffBackend + Backend>(
 
     model_trained.parameters();
     model_trained
+        .clone()
         .save_file(format!("{artifact_dir}/model"), &CompactRecorder::new())
         .expect("Failed to save model");
+
+    model_trained
 }
