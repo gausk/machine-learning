@@ -9,6 +9,7 @@ use burn::optim::AdamConfig;
 use burn::prelude::*;
 use burn::record::CompactRecorder;
 use burn::tensor::backend::AutodiffBackend;
+use burn::train::ClassificationOutput;
 use burn::train::TrainOutput;
 use burn::train::ValidStep;
 use burn::train::metric::LossMetric;
@@ -19,7 +20,7 @@ pub struct TrainingConfig {
     pub optimizer: AdamConfig,
     #[config(default = 10)]
     pub num_epochs: usize,
-    #[config(default = 64)]
+    #[config(default = 32)]
     pub batch_size: usize,
     #[config(default = 4)]
     pub num_workers: usize,
@@ -36,16 +37,22 @@ impl<B: AutodiffBackend> TrainStep<SimpleBatch<B>, RegressionOutput<B>> for Neur
     }
 }
 
-// impl<B: AutodiffBackend> TrainStep<SimpleBatch<B>, ClassificationOutput<B>> for NeuralNetwork<B> {
-//     fn step(&self, batch: SimpleBatch<B>) -> TrainOutput<ClassificationOutput<B>> {
-//         let item = self.forward_classification(batch.inputs, batch.targets.argmax(1).squeeze(1));
-//         TrainOutput::new(self, item.loss.backward(), item)
-//     }
-// }
-
 impl<B: Backend> ValidStep<SimpleBatch<B>, RegressionOutput<B>> for NeuralNetwork<B> {
     fn step(&self, batch: SimpleBatch<B>) -> RegressionOutput<B> {
         self.forward_regression(batch.inputs, batch.targets)
+    }
+}
+
+impl<B: AutodiffBackend> TrainStep<SimpleBatch<B>, ClassificationOutput<B>> for NeuralNetwork<B> {
+    fn step(&self, batch: SimpleBatch<B>) -> TrainOutput<ClassificationOutput<B>> {
+        let item = self.forward_classification(batch.inputs, batch.targets.reshape([-1]).int());
+        TrainOutput::new(self, item.loss.backward(), item)
+    }
+}
+
+impl<B: Backend> ValidStep<SimpleBatch<B>, ClassificationOutput<B>> for NeuralNetwork<B> {
+    fn step(&self, batch: SimpleBatch<B>) -> ClassificationOutput<B> {
+        self.forward_classification(batch.inputs, batch.targets.reshape([-1]).int())
     }
 }
 

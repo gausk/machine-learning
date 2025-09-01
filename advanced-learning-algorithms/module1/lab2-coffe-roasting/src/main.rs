@@ -9,10 +9,8 @@ use rand::{Rng, SeedableRng, rngs::StdRng};
 /// Creates a coffee roasting dataset.
 /// - roasting duration: 12-15 minutes is best
 /// - temperature range: 175-260C is best
-pub fn load_coffee_data() -> Vec<SampleData> {
+pub fn load_coffee_data(n: usize) -> Vec<SampleData> {
     let mut rng = StdRng::seed_from_u64(2);
-
-    let n = 200;
     let mut dataset = Vec::with_capacity(n);
 
     for _ in 0..n {
@@ -49,12 +47,12 @@ fn main() {
         Layer::new(2, 3, Activation::Sigmoid, &device),
         Layer::new(3, 1, Activation::Sigmoid, &device),
     ];
-    let data = load_coffee_data();
+    let data = load_coffee_data(200000);
     let model = train_model(
         "artifacts",
         TrainingConfig::new(AdamConfig::new())
-            .with_num_epochs(100000)
-            .with_learning_rate(0.0001),
+            .with_num_epochs(10)
+            .with_learning_rate(0.01),
         layers,
         device,
         data,
