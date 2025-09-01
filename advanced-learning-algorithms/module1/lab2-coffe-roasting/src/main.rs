@@ -3,42 +3,8 @@ use burn::optim::AdamConfig;
 use burn::prelude::Backend;
 use burn::prelude::Tensor;
 use burn_ndarray::NdArray;
-use lab1_neuron_and_layers::{
-    Activation, Layer, SampleData, TaskType, TrainingConfig, train_model,
-};
-use lab2_coffe_roasting::{normalize_inputs_with_stats, normalize_single_input};
-use rand::{Rng, SeedableRng, rngs::StdRng};
-
-/// Creates a coffee roasting dataset.
-/// - roasting duration: 12-15 minutes is best
-/// - temperature range: 175-260C is best
-pub fn load_coffee_data(n: usize) -> Vec<SampleData> {
-    let mut rng = StdRng::seed_from_u64(2);
-    let mut dataset = Vec::with_capacity(n);
-
-    for _ in 0..n {
-        let mut t = rng.r#gen::<f32>(); // temperature raw [0,1]
-        let mut d = rng.r#gen::<f32>(); // duration raw [0,1]
-
-        d = d * 4.0 + 11.5; // roasting duration: 12-15
-        t = t * (285.0 - 150.0) + 150.0; // temperature: 150-285
-
-        // classification condition
-        let y_line = -3.0 / (260.0 - 175.0) * t + 21.0;
-        let label = if t > 175.0 && t < 260.0 && d > 12.0 && d < 15.0 && d <= y_line {
-            1.0
-        } else {
-            0.0
-        };
-
-        dataset.push(SampleData {
-            input: vec![t, d],
-            target: vec![label],
-        });
-    }
-
-    dataset
-}
+use lab1_neuron_and_layers::{Activation, Layer, TaskType, TrainingConfig, train_model};
+use lab2_coffe_roasting::{load_coffee_data, normalize_inputs_with_stats, normalize_single_input};
 
 fn main() {
     println!("Welcome to Lab2 on Coffe Roasting");
@@ -53,13 +19,10 @@ fn main() {
     let norm_stats = normalize_inputs_with_stats(&mut data);
 
     // Save normalization stats for later inference
-    let stats_json = serde_json::to_string(&norm_stats).unwrap();
-    std::fs::create_dir_all("artifacts").ok();
-    std::fs::write("artifacts/normalization_stats.json", stats_json)
-        .expect("Failed to save normalization stats");
+    norm_stats.save_to_file("artifacts/norm_stats.json");
 
     let model = train_model(
-        "artifacts",
+        "artifacts/coffee-roasting",
         TrainingConfig::new(AdamConfig::new())
             .with_num_epochs(10)
             .with_learning_rate(0.01),

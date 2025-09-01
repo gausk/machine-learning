@@ -1,10 +1,62 @@
 use lab1_neuron_and_layers::SampleData;
+use rand::{Rng, SeedableRng, rngs::StdRng};
 use serde::{Deserialize, Serialize};
+
+/// Creates a coffee roasting dataset.
+/// - roasting duration: 12-15 minutes is best
+/// - temperature range: 175-260C is best
+pub fn load_coffee_data(n: usize) -> Vec<SampleData> {
+    let mut rng = StdRng::seed_from_u64(2);
+    let mut dataset = Vec::with_capacity(n);
+
+    for _ in 0..n {
+        let mut t = rng.r#gen::<f32>(); // temperature raw [0,1]
+        let mut d = rng.r#gen::<f32>(); // duration raw [0,1]
+
+        d = d * 4.0 + 11.5; // roasting duration: 12-15
+        t = t * (285.0 - 150.0) + 150.0; // temperature: 150-285
+
+        // classification condition
+        let y_line = -3.0 / (260.0 - 175.0) * t + 21.0;
+        let label = if t > 175.0 && t < 260.0 && d > 12.0 && d < 15.0 && d <= y_line {
+            1.0
+        } else {
+            0.0
+        };
+
+        dataset.push(SampleData {
+            input: vec![t, d],
+            target: vec![label],
+        });
+    }
+
+    dataset
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NormalizationStats {
     pub input_means: Vec<f32>,
     pub input_stds: Vec<f32>,
+}
+
+impl NormalizationStats {
+    pub fn new(input_means: Vec<f32>, input_stds: Vec<f32>) -> Self {
+        Self {
+            input_means,
+            input_stds,
+        }
+    }
+
+    pub fn load_from_file(path: &str) -> Self {
+        let stats_json = std::fs::read_to_string(path).expect("Failed to read normalization stats");
+        serde_json::from_str(&stats_json).expect("Failed to parse normalization stats")
+    }
+
+    pub fn save_to_file(&self, path: &str) {
+        let stats_json =
+            serde_json::to_string(&self).expect("Failed to serialize normalization stats");
+        std::fs::write(path, stats_json).expect("Failed to save normalization stats");
+    }
 }
 
 // Normalize each input feature separately and return stats
