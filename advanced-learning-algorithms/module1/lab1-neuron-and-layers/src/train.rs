@@ -15,6 +15,12 @@ use burn::train::ValidStep;
 use burn::train::metric::LossMetric;
 use burn::train::{LearnerBuilder, RegressionOutput, TrainStep};
 
+#[derive(Debug, Clone)]
+pub enum TaskType {
+    Classification,
+    Regression,
+}
+
 #[derive(Config)]
 pub struct TrainingConfig {
     pub optimizer: AdamConfig,
@@ -45,14 +51,14 @@ impl<B: Backend> ValidStep<SimpleBatch<B>, RegressionOutput<B>> for NeuralNetwor
 
 impl<B: AutodiffBackend> TrainStep<SimpleBatch<B>, ClassificationOutput<B>> for NeuralNetwork<B> {
     fn step(&self, batch: SimpleBatch<B>) -> TrainOutput<ClassificationOutput<B>> {
-        let item = self.forward_classification(batch.inputs, batch.targets.reshape([-1]).int());
+        let item = self.forward_classification(batch.inputs, batch.targets);
         TrainOutput::new(self, item.loss.backward(), item)
     }
 }
 
 impl<B: Backend> ValidStep<SimpleBatch<B>, ClassificationOutput<B>> for NeuralNetwork<B> {
     fn step(&self, batch: SimpleBatch<B>) -> ClassificationOutput<B> {
-        self.forward_classification(batch.inputs, batch.targets.reshape([-1]).int())
+        self.forward_classification(batch.inputs, batch.targets)
     }
 }
 
@@ -62,6 +68,22 @@ fn create_artifacts_directory(path: &str) {
 }
 
 pub fn train_model<B: AutodiffBackend + Backend>(
+    artifact_dir: &str,
+    config: TrainingConfig,
+    layers: Vec<Layer<B>>,
+    device: B::Device,
+    data: Vec<SampleData>,
+    task_type: TaskType,
+) -> NeuralNetwork<B> {
+    match task_type {
+        TaskType::Classification => {
+            train_classification_model(artifact_dir, config, layers, device, data)
+        }
+        TaskType::Regression => train_regression_model(artifact_dir, config, layers, device, data),
+    }
+}
+
+fn train_classification_model<B: AutodiffBackend + Backend>(
     artifact_dir: &str,
     config: TrainingConfig,
     layers: Vec<Layer<B>>,
@@ -88,8 +110,6 @@ pub fn train_model<B: AutodiffBackend + Backend>(
         .build(InMemDataset::new(vec![]));
 
     let learner = LearnerBuilder::new(artifact_dir)
-        //.metric_train_numeric(AccuracyMetric::new())
-        //.metric_valid_numeric(AccuracyMetric::new())
         .metric_train_numeric(LossMetric::new())
         .metric_valid_numeric(LossMetric::new())
         .with_file_checkpointer(CompactRecorder::new())
@@ -102,7 +122,57 @@ pub fn train_model<B: AutodiffBackend + Backend>(
             config.learning_rate,
         );
 
-    let model_trained = learner.fit(train_loader, test_loader);
+    let model_trained = learner.fit::<SimpleBatch<B>, SimpleBatch<B::InnerBackend>, ClassificationOutput<B>, ClassificationOutput<B::InnerBackend>>(train_loader, test_loader);
+
+    model_trained.parameters();
+    model_trained
+        .clone()
+        .save_file(format!("{artifact_dir}/model"), &CompactRecorder::new())
+        .expect("Failed to save model");
+
+    model_trained
+}
+
+fn train_regression_model<B: AutodiffBackend + Backend>(
+    artifact_dir: &str,
+    config: TrainingConfig,
+    layers: Vec<Layer<B>>,
+    device: B::Device,
+    data: Vec<SampleData>,
+) -> NeuralNetwork<B> {
+    create_artifacts_directory(artifact_dir);
+    config
+        .save(format!("{artifact_dir}/config.json"))
+        .expect("Failed to save config");
+
+    B::seed(config.seed);
+
+    let train_loader = DataLoaderBuilder::new(SimpleBatcher)
+        .batch_size(config.batch_size)
+        .num_workers(config.num_workers)
+        .shuffle(config.seed)
+        .build(InMemDataset::new(data));
+
+    let test_loader = DataLoaderBuilder::new(SimpleBatcher)
+        .batch_size(config.batch_size)
+        .num_workers(config.num_workers)
+        .shuffle(config.seed)
+        .build(InMemDataset::new(vec![]));
+
+    let learner = LearnerBuilder::new(artifact_dir)
+        .metric_train_numeric(LossMetric::new())
+        .metric_valid_numeric(LossMetric::new())
+        .with_file_checkpointer(CompactRecorder::new())
+        .devices(vec![device.clone()])
+        .num_epochs(config.num_epochs)
+        .summary()
+        .build(
+            NeuralNetwork::new(layers),
+            config.optimizer.init(),
+            config.learning_rate,
+        );
+
+    let model_trained = learner.fit::<SimpleBatch<B>, SimpleBatch<B::InnerBackend>, RegressionOutput<B>, RegressionOutput<B::InnerBackend>>(train_loader, test_loader);
 
     model_trained.parameters();
     model_trained

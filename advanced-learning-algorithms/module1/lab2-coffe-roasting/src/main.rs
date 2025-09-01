@@ -3,7 +3,10 @@ use burn::optim::AdamConfig;
 use burn::prelude::Backend;
 use burn::prelude::Tensor;
 use burn_ndarray::NdArray;
-use lab1_neuron_and_layers::{Activation, Layer, SampleData, TrainingConfig, train_model};
+use lab1_neuron_and_layers::{
+    Activation, Layer, SampleData, TaskType, TrainingConfig, train_model,
+};
+use lab2_coffe_roasting::{normalize_inputs_with_stats, normalize_single_input};
 use rand::{Rng, SeedableRng, rngs::StdRng};
 
 /// Creates a coffee roasting dataset.
@@ -17,7 +20,6 @@ pub fn load_coffee_data(n: usize) -> Vec<SampleData> {
         let mut t = rng.r#gen::<f32>(); // temperature raw [0,1]
         let mut d = rng.r#gen::<f32>(); // duration raw [0,1]
 
-        // scale features
         d = d * 4.0 + 11.5; // roasting duration: 12-15
         t = t * (285.0 - 150.0) + 150.0; // temperature: 150-285
 
@@ -47,7 +49,15 @@ fn main() {
         Layer::new(2, 3, Activation::Sigmoid, &device),
         Layer::new(3, 1, Activation::Sigmoid, &device),
     ];
-    let data = load_coffee_data(200000);
+    let mut data = load_coffee_data(200000);
+    let norm_stats = normalize_inputs_with_stats(&mut data);
+
+    // Save normalization stats for later inference
+    let stats_json = serde_json::to_string(&norm_stats).unwrap();
+    std::fs::create_dir_all("artifacts").ok();
+    std::fs::write("artifacts/normalization_stats.json", stats_json)
+        .expect("Failed to save normalization stats");
+
     let model = train_model(
         "artifacts",
         TrainingConfig::new(AdamConfig::new())
@@ -56,8 +66,40 @@ fn main() {
         layers,
         device,
         data,
+        TaskType::Classification,
     );
 
-    let predict = model.forward(Tensor::from_floats([[200.0, 13.9], [200.0, 17.0]], &device));
-    println!("{}", predict.to_data());
+    println!("--- Inference Examples ---");
+    let mut raw_inputs = vec![vec![200.0, 13.9], vec![200.0, 17.0]];
+
+    println!("Raw inputs: {:?}", raw_inputs);
+
+    // Apply the same normalization used during training
+    for input in raw_inputs.iter_mut() {
+        normalize_single_input(input, &norm_stats);
+    }
+
+    println!("Normalized inputs: {:?}", raw_inputs);
+
+    let input_tensor = Tensor::from_floats(
+        [
+            [raw_inputs[0][0], raw_inputs[0][1]],
+            [raw_inputs[1][0], raw_inputs[1][1]],
+        ],
+        &device,
+    );
+
+    let predictions = model.forward(input_tensor);
+    println!("Predictions: {}", predictions.to_data());
+
+    let pred_data = predictions.to_data();
+    let values = pred_data.as_slice::<f32>().unwrap();
+    for (i, &prob) in values.iter().enumerate() {
+        let class = if prob > 0.5 {
+            "Good Coffee"
+        } else {
+            "Poor Coffee"
+        };
+        println!("Sample {}: probability={:.3} -> {}", i, prob, class);
+    }
 }

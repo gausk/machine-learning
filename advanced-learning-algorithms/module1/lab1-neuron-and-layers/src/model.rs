@@ -1,8 +1,7 @@
 use burn::module::Module;
-use burn::nn::loss::CrossEntropyLossConfig;
 use burn::nn::{
     Linear, LinearConfig,
-    loss::{MseLoss, Reduction},
+    loss::{BinaryCrossEntropyLossConfig, MseLoss, Reduction},
 };
 use burn::optim::{AdamConfig, GradientsParams, Optimizer};
 use burn::prelude::*;
@@ -68,13 +67,18 @@ impl<B: Backend> NeuralNetwork<B> {
     pub fn forward_classification(
         &self,
         x: Tensor<B, 2>,
-        targets: Tensor<B, 1, Int>,
+        targets: Tensor<B, 2>,
     ) -> ClassificationOutput<B> {
         let output = self.forward(x);
-        let loss = CrossEntropyLossConfig::new()
+        // For binary classification with single output neuron, use binary cross-entropy
+        // BinaryCrossEntropyLoss expects integer targets, so convert float targets to int
+        let targets_int = targets.int();
+        let loss = BinaryCrossEntropyLossConfig::new()
             .init(&output.device())
-            .forward(output.clone(), targets.clone());
-        ClassificationOutput::new(loss, output, targets)
+            .forward(output.clone(), targets_int.clone());
+        // Convert targets to 1D int for ClassificationOutput (flatten to 1D)
+        let targets_1d = targets_int.reshape([-1]);
+        ClassificationOutput::new(loss, output, targets_1d)
     }
 
     pub fn forward_regression(

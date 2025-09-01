@@ -2,7 +2,9 @@ use burn::backend::Autodiff;
 use burn::optim::AdamConfig;
 use burn::prelude::Backend;
 use burn_ndarray::NdArray;
-use lab1_neuron_and_layers::{Activation, Layer, SampleData, TrainingConfig, train_model};
+use lab1_neuron_and_layers::{
+    Activation, Layer, SampleData, TaskType, TrainingConfig, train_model,
+};
 
 fn main() {
     println!("Welcome to Lab1 on Neuron and Layers");
@@ -23,8 +25,10 @@ fn main() {
         vec![layer_linear],
         device,
         data,
+        TaskType::Regression,
     );
 
+    println!("--- Single Neuron Classification Model ---");
     let layer_sigmoid: Layer<MyBackend> = Layer::new(1, 1, Activation::Sigmoid, &device);
     let data = vec![
         SampleData::new(vec![1.0], vec![0.0]),
@@ -36,9 +40,12 @@ fn main() {
     ];
     train_model(
         "artifacts/sigmoid",
-        TrainingConfig::new(AdamConfig::new()).with_num_epochs(100000),
+        TrainingConfig::new(AdamConfig::new())
+            .with_num_epochs(1000)
+            .with_learning_rate(0.01),
         vec![layer_sigmoid],
         device,
         data,
+        TaskType::Classification,
     );
 }
