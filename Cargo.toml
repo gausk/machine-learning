@@ -4,6 +4,8 @@ members = [
     "advanced-learning-algorithms/module1/lab2-coffe-roasting",
     "advanced-learning-algorithms/module1/lab3-coffe-roasting-simple",
     "advanced-learning-algorithms/module1/practice-w1-hdr",
+    "advanced-learning-algorithms/module2/lab1-relu",
+    "advanced-learning-algorithms/module2/lab2-softmax",
     "supervised-learning/module1/l1-intro",
     "supervised-learning/module1/lab2-model-representation",
     "supervised-learning/module1/lab3-cost-function",
