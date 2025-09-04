@@ -1,4 +1,5 @@
 use burn::module::Module;
+use burn::nn::loss::CrossEntropyLossConfig;
 use burn::nn::{
     Linear, LinearConfig,
     loss::{BinaryCrossEntropyLossConfig, MseLoss, Reduction},
@@ -7,7 +8,7 @@ use burn::optim::{AdamConfig, GradientsParams, Optimizer};
 use burn::prelude::*;
 use burn::tensor::activation::{relu, sigmoid, tanh};
 use burn::tensor::backend::AutodiffBackend;
-use burn::train::{ClassificationOutput, RegressionOutput};
+use burn::train::{ClassificationOutput, MultiLabelClassificationOutput, RegressionOutput};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize, Module)]
@@ -79,6 +80,20 @@ impl<B: Backend> NeuralNetwork<B> {
         // Convert targets to 1D int for ClassificationOutput (flatten to 1D)
         let targets_1d = targets_int.reshape([-1]);
         ClassificationOutput::new(loss, output, targets_1d)
+    }
+
+    pub fn forward_multi_classification(
+        &self,
+        x: Tensor<B, 2>,
+        targets: Tensor<B, 2>,
+    ) -> MultiLabelClassificationOutput<B> {
+        let output = self.forward(x);
+        let targets_int = targets.clone().int().squeeze(1);
+        let loss = CrossEntropyLossConfig::new()
+            .with_logits(true)
+            .init(&output.device())
+            .forward(output.clone(), targets_int.clone());
+        MultiLabelClassificationOutput::new(loss, output, targets.int())
     }
 
     pub fn forward_regression(

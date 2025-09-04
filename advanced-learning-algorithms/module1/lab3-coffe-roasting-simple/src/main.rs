@@ -57,12 +57,12 @@ fn main() {
     println!("Normalized sample inputs: {:?}", raw_inputs);
 
     let w1 = vec![
-        vec![-12.685068, 0.10102703, 18.06062],
-        vec![0.039592095, -9.941722, 15.09867],
+        vec![-12.696792, 0.08674376, 18.024025],
+        vec![0.065991946, -9.936261, 15.134285],
     ];
-    let b1 = vec![-15.049257, -14.028811, 1.0624323];
-    let w2 = vec![vec![-35.264725], vec![-34.259083], vec![-37.175594]];
-    let b2 = vec![9.041908];
+    let b1 = vec![-15.026951, -14.071334, 1.0949218];
+    let w2 = vec![vec![-35.28394], vec![-34.293053], vec![-37.196335]];
+    let b2 = vec![8.992294];
 
     let x_data: Vec<Vec<f32>> = data.iter().map(|d| d.input.clone()).collect();
     let y_true: Vec<Vec<f32>> = data.iter().map(|d| d.target.clone()).collect();

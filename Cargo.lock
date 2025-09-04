@@ -3581,7 +3581,12 @@ dependencies = [
 name = "lab2-softmax"
 version = "0.1.0"
 dependencies = [
+ "burn",
+ "burn-ndarray",
+ "lab1-neuron-and-layers",
  "lab1-relu",
+ "rand 0.8.5",
+ "rand_distr 0.4.3",
 ]
 
 [[package]]

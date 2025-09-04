@@ -19,6 +19,7 @@ fn main() {
     let norm_stats = normalize_inputs_with_stats(&mut data);
 
     // Save normalization stats for later inference
+    std::fs::create_dir_all("artifacts").expect("Failed to create data directory");
     norm_stats.save_to_file("artifacts/norm_stats.json");
 
     let model = train_model(
