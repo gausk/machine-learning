@@ -6,9 +6,9 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
+burn = { workspace = true }
+burn-ndarray = { workspace = true }
+lab1-neuron-and-layers = { path = "../../module1/lab1-neuron-and-layers" }
 lab1-relu = { path = "../lab1-relu" }
 rand = "0.8"
 rand_distr = "0.4.3"
-lab1-neuron-and-layers = { path = "../../module1/lab1-neuron-and-layers" }
-burn = { workspace = true }
-burn-ndarray = { workspace = true }

@@ -9,5 +9,5 @@ description.workspace = true
 burn = { workspace = true }
 burn-ndarray = { workspace = true }
 lab1-neuron-and-layers = { path = "../lab1-neuron-and-layers" }
-ndarray-npy = "0.8"
 ndarray = { workspace = true }
+ndarray-npy = "0.8"

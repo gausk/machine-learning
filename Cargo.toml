@@ -1,5 +1,5 @@
 [workspace]
-members = [ 
+members = [
     "advanced-learning-algorithms/module1/lab1-neuron-and-layers",
     "advanced-learning-algorithms/module1/lab2-coffe-roasting",
     "advanced-learning-algorithms/module1/lab3-coffe-roasting-simple",
@@ -35,6 +35,6 @@ authors = ["Gaurav Kumar <gauravsingh12341@gmail.com>"]
 description = "Rust implementations of all labs for Andrew Ng's Coursera Machine Learning course."
 
 [workspace.dependencies]
-ndarray = "0.15.6"
 burn = { version = "0.18.0", features = ["autodiff", "train"] }
 burn-ndarray = "0.18"
+ndarray = "0.15.6"
