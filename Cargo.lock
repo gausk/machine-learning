@@ -4960,6 +4960,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "practice-w2-hdrm"
+version = "0.1.0"
+dependencies = [
+ "burn",
+ "burn-ndarray",
+ "lab1-neuron-and-layers",
+ "lab2-softmax",
+ "practice-w1-hdr",
+]
+
+[[package]]
 name = "practice-w2-linear-regression"
 version = "0.1.0"
 dependencies = [

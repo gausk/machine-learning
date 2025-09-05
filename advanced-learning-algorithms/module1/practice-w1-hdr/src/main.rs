@@ -3,41 +3,14 @@ use burn::optim::AdamConfig;
 use burn::prelude::Tensor;
 use burn::prelude::{Backend, TensorData};
 use burn_ndarray::NdArray;
-use lab1_neuron_and_layers::{
-    Activation, Layer, SampleData, TaskType, TrainingConfig, train_model,
-};
-use ndarray::Array2;
-use ndarray_npy::read_npy;
-use std::path::Path;
-
-fn load_data() -> Vec<SampleData> {
-    let x_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/X.npy");
-    let y_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/y.npy");
-    let x_train: Array2<f64> = read_npy(x_path).unwrap();
-    let y_train: Array2<u8> = read_npy(y_path).unwrap();
-    let n = 1000.min(x_train.nrows()).min(y_train.nrows());
-    let mut samples = Vec::with_capacity(n);
-    for i in 0..n {
-        let input = x_train
-            .row(i)
-            .iter()
-            .map(|x| *x as f32)
-            .collect::<Vec<f32>>();
-        let target = y_train
-            .row(i)
-            .iter()
-            .map(|x| *x as f32)
-            .collect::<Vec<f32>>();
-        samples.push(SampleData::new(input, target));
-    }
-    samples
-}
+use lab1_neuron_and_layers::{Activation, Layer, TaskType, TrainingConfig, train_model};
+use practice_w1_hdr::load_data;
 
 fn main() {
     println!(
         "Welcome to Week 1 practice assignment on Neural Networks for Handwritten Digit Recognition"
     );
-    let data = load_data();
+    let data = load_data(1000);
     println!("Input shape: [{}, {}], ", data.len(), data[0].input.len());
     println!("Target shape: [{}, {}], ", data.len(), data[0].target.len());
 

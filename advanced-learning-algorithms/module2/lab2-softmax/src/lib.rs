@@ -35,6 +35,7 @@ pub fn evaluate_correctness<B: Backend>(
     model: &NeuralNetwork<B>,
     data: &[SampleData],
     device: &Device<B>,
+    class: usize,
 ) {
     let flat: Vec<f32> = data.iter().flat_map(|d| d.input.clone()).collect();
 
@@ -49,11 +50,11 @@ pub fn evaluate_correctness<B: Backend>(
     let mut correct = 0;
     for i in 0..data_size {
         let y = data[i].target[0] as usize;
-        let mut max_prob = y_predicted[4 * i];
+        let mut max_prob = y_predicted[class * i];
         let mut predicted_class = 0;
-        for j in 1..4 {
-            if y_predicted[4 * i + j] > max_prob {
-                max_prob = y_predicted[4 * i + j];
+        for j in 1..class {
+            if y_predicted[class * i + j] > max_prob {
+                max_prob = y_predicted[class * i + j];
                 predicted_class = j;
             }
         }

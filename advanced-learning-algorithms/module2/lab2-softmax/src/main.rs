@@ -43,7 +43,7 @@ fn main() {
         TaskType::MultiClassification(false),
     );
     println!("Evaluating obvious flow with softmax layer...");
-    evaluate_correctness(&model, &data, &device);
+    evaluate_correctness(&model, &data, &device, 4);
 
     // Preferred flow
     let layers_with_linear: Vec<Layer<MyBackend>> = vec![
@@ -63,5 +63,5 @@ fn main() {
         TaskType::MultiClassification(true),
     );
     println!("Evaluating preferred flow with final linear layer and with logits...");
-    evaluate_correctness(&model, &data, &device);
+    evaluate_correctness(&model, &data, &device, 4);
 }
