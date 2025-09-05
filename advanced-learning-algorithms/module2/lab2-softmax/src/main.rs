@@ -28,7 +28,7 @@ fn main() {
     let layers: Vec<Layer<MyBackend>> = vec![
         Layer::new(2, 25, Activation::Sigmoid, &device),
         Layer::new(25, 15, Activation::Sigmoid, &device),
-        Layer::new(15, 4, Activation::None, &device),
+        Layer::new(15, 1, Activation::Sigmoid, &device),
     ];
 
     let model = train_model(

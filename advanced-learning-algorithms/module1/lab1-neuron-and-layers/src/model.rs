@@ -8,7 +8,7 @@ use burn::optim::{AdamConfig, GradientsParams, Optimizer};
 use burn::prelude::*;
 use burn::tensor::activation::{relu, sigmoid, tanh};
 use burn::tensor::backend::AutodiffBackend;
-use burn::train::{ClassificationOutput, MultiLabelClassificationOutput, RegressionOutput};
+use burn::train::{ClassificationOutput, RegressionOutput};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize, Module)]
@@ -51,13 +51,23 @@ impl<B: Backend> Layer<B> {
 #[derive(Module, Debug)]
 pub struct NeuralNetwork<B: Backend> {
     layers: Vec<Layer<B>>,
+    is_multi_classification: bool,
 }
 
 impl<B: Backend> NeuralNetwork<B> {
     pub fn new(layers: Vec<Layer<B>>) -> Self {
-        Self { layers }
+        Self {
+            layers,
+            is_multi_classification: false,
+        }
     }
 
+    pub fn with_muti_classification(layers: Vec<Layer<B>>) -> Self {
+        Self {
+            layers,
+            is_multi_classification: true,
+        }
+    }
     pub fn forward(&self, mut x: Tensor<B, 2>) -> Tensor<B, 2> {
         for layer in &self.layers {
             x = layer.forward(x);
@@ -71,29 +81,17 @@ impl<B: Backend> NeuralNetwork<B> {
         targets: Tensor<B, 2>,
     ) -> ClassificationOutput<B> {
         let output = self.forward(x);
-        // For binary classification with single output neuron, use binary cross-entropy
-        // BinaryCrossEntropyLoss expects integer targets, so convert float targets to int
-        let targets_int = targets.int();
-        let loss = BinaryCrossEntropyLossConfig::new()
-            .init(&output.device())
-            .forward(output.clone(), targets_int.clone());
-        // Convert targets to 1D int for ClassificationOutput (flatten to 1D)
-        let targets_1d = targets_int.reshape([-1]);
-        ClassificationOutput::new(loss, output, targets_1d)
-    }
-
-    pub fn forward_multi_classification(
-        &self,
-        x: Tensor<B, 2>,
-        targets: Tensor<B, 2>,
-    ) -> MultiLabelClassificationOutput<B> {
-        let output = self.forward(x);
-        let targets_int = targets.clone().int().squeeze(1);
-        let loss = CrossEntropyLossConfig::new()
-            .with_logits(true)
-            .init(&output.device())
-            .forward(output.clone(), targets_int.clone());
-        MultiLabelClassificationOutput::new(loss, output, targets.int())
+        let targets_int = targets.clone().int().reshape([-1]);
+        let loss = if self.is_multi_classification {
+            CrossEntropyLossConfig::new()
+                .init(&output.device())
+                .forward(output.clone(), targets_int.clone())
+        } else {
+            BinaryCrossEntropyLossConfig::new()
+                .init(&output.device())
+                .forward(output.clone(), targets.int())
+        };
+        ClassificationOutput::new(loss, output, targets_int)
     }
 
     pub fn forward_regression(

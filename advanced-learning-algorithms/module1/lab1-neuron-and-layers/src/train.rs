@@ -9,10 +9,10 @@ use burn::optim::AdamConfig;
 use burn::prelude::*;
 use burn::record::CompactRecorder;
 use burn::tensor::backend::AutodiffBackend;
+use burn::train::ClassificationOutput;
 use burn::train::TrainOutput;
 use burn::train::ValidStep;
 use burn::train::metric::{AccuracyMetric, LossMetric};
-use burn::train::{ClassificationOutput, MultiLabelClassificationOutput};
 use burn::train::{LearnerBuilder, RegressionOutput, TrainStep};
 
 #[derive(Debug, Clone)]
@@ -63,21 +63,6 @@ impl<B: Backend> ValidStep<SimpleBatch<B>, ClassificationOutput<B>> for NeuralNe
     }
 }
 
-impl<B: AutodiffBackend> TrainStep<SimpleBatch<B>, MultiLabelClassificationOutput<B>>
-    for NeuralNetwork<B>
-{
-    fn step(&self, batch: SimpleBatch<B>) -> TrainOutput<MultiLabelClassificationOutput<B>> {
-        let item = self.forward_multi_classification(batch.inputs, batch.targets);
-        TrainOutput::new(self, item.loss.backward(), item)
-    }
-}
-
-impl<B: Backend> ValidStep<SimpleBatch<B>, MultiLabelClassificationOutput<B>> for NeuralNetwork<B> {
-    fn step(&self, batch: SimpleBatch<B>) -> MultiLabelClassificationOutput<B> {
-        self.forward_multi_classification(batch.inputs, batch.targets)
-    }
-}
-
 fn create_artifacts_directory(path: &str) {
     std::fs::remove_dir_all(path).ok();
     std::fs::create_dir_all(path).unwrap();
@@ -93,11 +78,11 @@ pub fn train_model<B: AutodiffBackend + Backend>(
 ) -> NeuralNetwork<B> {
     match task_type {
         TaskType::Classification => {
-            train_classification_model(artifact_dir, config, layers, device, data)
+            train_classification_model(artifact_dir, config, layers, device, data, false)
         }
         TaskType::Regression => train_regression_model(artifact_dir, config, layers, device, data),
         TaskType::MultiClassification => {
-            train_multi_classification_model(artifact_dir, config, layers, device, data)
+            train_classification_model(artifact_dir, config, layers, device, data, true)
         }
     }
 }
@@ -108,6 +93,7 @@ fn train_classification_model<B: AutodiffBackend + Backend>(
     layers: Vec<Layer<B>>,
     device: B::Device,
     data: Vec<SampleData>,
+    is_multi_classification: bool,
 ) -> NeuralNetwork<B> {
     create_artifacts_directory(artifact_dir);
     config
@@ -128,6 +114,12 @@ fn train_classification_model<B: AutodiffBackend + Backend>(
         .shuffle(config.seed)
         .build(InMemDataset::new(vec![]));
 
+    let model = if is_multi_classification {
+        NeuralNetwork::with_muti_classification(layers)
+    } else {
+        NeuralNetwork::new(layers)
+    };
+
     let learner = LearnerBuilder::new(artifact_dir)
         .metric_train_numeric(AccuracyMetric::new())
         .metric_valid_numeric(AccuracyMetric::new())
@@ -137,11 +129,7 @@ fn train_classification_model<B: AutodiffBackend + Backend>(
         .devices(vec![device.clone()])
         .num_epochs(config.num_epochs)
         .summary()
-        .build(
-            NeuralNetwork::new(layers),
-            config.optimizer.init(),
-            config.learning_rate,
-        );
+        .build(model, config.optimizer.init(), config.learning_rate);
 
     let model_trained = learner.fit::<SimpleBatch<B>, SimpleBatch<B::InnerBackend>, ClassificationOutput<B>, ClassificationOutput<B::InnerBackend>>(train_loader, test_loader);
 
@@ -194,56 +182,6 @@ fn train_regression_model<B: AutodiffBackend + Backend>(
         );
 
     let model_trained = learner.fit::<SimpleBatch<B>, SimpleBatch<B::InnerBackend>, RegressionOutput<B>, RegressionOutput<B::InnerBackend>>(train_loader, test_loader);
-
-    model_trained.parameters();
-    model_trained
-        .clone()
-        .save_file(format!("{artifact_dir}/model"), &CompactRecorder::new())
-        .expect("Failed to save model");
-
-    model_trained
-}
-
-fn train_multi_classification_model<B: AutodiffBackend + Backend>(
-    artifact_dir: &str,
-    config: TrainingConfig,
-    layers: Vec<Layer<B>>,
-    device: B::Device,
-    data: Vec<SampleData>,
-) -> NeuralNetwork<B> {
-    create_artifacts_directory(artifact_dir);
-    config
-        .save(format!("{artifact_dir}/config.json"))
-        .expect("Failed to save config");
-
-    B::seed(config.seed);
-
-    let train_loader = DataLoaderBuilder::new(SimpleBatcher)
-        .batch_size(config.batch_size)
-        .num_workers(config.num_workers)
-        .shuffle(config.seed)
-        .build(InMemDataset::new(data));
-
-    let test_loader = DataLoaderBuilder::new(SimpleBatcher)
-        .batch_size(config.batch_size)
-        .num_workers(config.num_workers)
-        .shuffle(config.seed)
-        .build(InMemDataset::new(vec![]));
-
-    let learner = LearnerBuilder::new(artifact_dir)
-        .metric_train_numeric(LossMetric::new())
-        .metric_valid_numeric(LossMetric::new())
-        .with_file_checkpointer(CompactRecorder::new())
-        .devices(vec![device.clone()])
-        .num_epochs(config.num_epochs)
-        .summary()
-        .build(
-            NeuralNetwork::new(layers),
-            config.optimizer.init(),
-            config.learning_rate,
-        );
-
-    let model_trained = learner.fit::<SimpleBatch<B>, SimpleBatch<B::InnerBackend>, MultiLabelClassificationOutput<B>, MultiLabelClassificationOutput<B::InnerBackend>>(train_loader, test_loader);
 
     model_trained.parameters();
     model_trained
