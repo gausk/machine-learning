@@ -3728,6 +3728,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab5-backprop"
+version = "0.1.0"
+dependencies = [
+ "ahash",
+ "symbolica",
+]
+
+[[package]]
 name = "lab5-cost-function"
 version = "0.1.0"
 dependencies = [
