@@ -1,0 +1,12 @@
+[package]
+name = "lab3-multiclass"
+version = "0.1.0"
+edition.workspace = true
+authors.workspace = true
+description.workspace = true
+
+[dependencies]
+burn = { workspace = true }
+burn-ndarray = { workspace = true }
+lab1-neuron-and-layers = { path = "../../module1/lab1-neuron-and-layers" }
+lab2-softmax = { path = "../lab2-softmax" }

@@ -1,10 +1,10 @@
 use burn::backend::Autodiff;
 use burn::optim::AdamConfig;
-use burn::prelude::{Backend, Tensor, TensorData};
+use burn::prelude::Backend;
 use burn_ndarray::NdArray;
 use lab1_neuron_and_layers::{Activation, Layer, TaskType, TrainingConfig, train_model};
 use lab1_relu::plot_xy;
-use lab2_softmax::{make_blobs, my_softmax};
+use lab2_softmax::{evaluate_correctness, make_blobs, my_softmax};
 
 fn main() {
     let z: Vec<f64> = (1..=5).map(|v| v as f64).collect();
@@ -25,54 +25,43 @@ fn main() {
     type MyBackend = Autodiff<NdArray<f32>>;
     let device = <MyBackend as Backend>::Device::default();
 
-    let layers: Vec<Layer<MyBackend>> = vec![
-        Layer::new(2, 25, Activation::Sigmoid, &device),
-        Layer::new(25, 15, Activation::Sigmoid, &device),
+    // Obvious flow
+    let layers_with_softmax: Vec<Layer<MyBackend>> = vec![
+        Layer::new(2, 25, Activation::ReLU, &device),
+        Layer::new(25, 15, Activation::ReLU, &device),
+        Layer::new(15, 4, Activation::Softmax, &device),
+    ];
+
+    let model = train_model(
+        "artifacts/obvious-softmax",
+        TrainingConfig::new(AdamConfig::new())
+            .with_num_epochs(10)
+            .with_learning_rate(0.001),
+        layers_with_softmax,
+        device,
+        data.clone(),
+        TaskType::MultiClassification(false),
+    );
+    println!("Evaluating obvious flow with softmax layer...");
+    evaluate_correctness(&model, &data, &device);
+
+    // Preferred flow
+    let layers_with_linear: Vec<Layer<MyBackend>> = vec![
+        Layer::new(2, 25, Activation::ReLU, &device),
+        Layer::new(25, 15, Activation::ReLU, &device),
         Layer::new(15, 4, Activation::None, &device),
     ];
 
     let model = train_model(
-        "artifacts",
+        "artifacts/preferred-softmax",
         TrainingConfig::new(AdamConfig::new())
-            .with_num_epochs(20)
+            .with_num_epochs(10)
             .with_learning_rate(0.001),
-        layers,
+        layers_with_linear,
         device,
         data.clone(),
-        TaskType::MultiClassification,
+        TaskType::MultiClassification(true),
     );
-
-    let flat: Vec<f32> = data.iter().flat_map(|d| d.input.clone()).collect();
-
-    let data_size = data.len();
-    let target_dim = data[0].input.len();
-
-    let x_test =
-        Tensor::<MyBackend, 2>::from_data(TensorData::new(flat, [data_size, target_dim]), &device);
-
-    let predicted = model.forward(x_test).to_data();
-    let y_predicted = predicted.as_slice::<f32>().unwrap();
-
-    let mut correct = 0;
-    for i in 0..data_size {
-        let y = data[i].target[0] as usize;
-        let mut max_prob = y_predicted[4 * i];
-        let mut predicted_class = 0;
-        for j in 1..4 {
-            if y_predicted[4 * i + j] > max_prob {
-                max_prob = y_predicted[4 * i + j];
-                predicted_class = j;
-            }
-        }
-
-        if predicted_class == y {
-            correct += 1;
-        }
-    }
-
-    println!("Correct predictions: {} / {}", correct, data_size);
-    println!(
-        "Accuracy: {:.2}%",
-        (correct as f32 / data_size as f32) * 100.0
-    );
+    println!("Evaluating preferred flow with final linear layer and with logits...");
+    evaluate_correctness(&model, &data, &device);
 }

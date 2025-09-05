@@ -19,7 +19,7 @@ use burn::train::{LearnerBuilder, RegressionOutput, TrainStep};
 pub enum TaskType {
     Classification,
     Regression,
-    MultiClassification,
+    MultiClassification(bool),
 }
 
 #[derive(Config)]
@@ -78,12 +78,18 @@ pub fn train_model<B: AutodiffBackend + Backend>(
 ) -> NeuralNetwork<B> {
     match task_type {
         TaskType::Classification => {
-            train_classification_model(artifact_dir, config, layers, device, data, false)
+            train_classification_model(artifact_dir, config, layers, device, data, false, false)
         }
         TaskType::Regression => train_regression_model(artifact_dir, config, layers, device, data),
-        TaskType::MultiClassification => {
-            train_classification_model(artifact_dir, config, layers, device, data, true)
-        }
+        TaskType::MultiClassification(with_logits) => train_classification_model(
+            artifact_dir,
+            config,
+            layers,
+            device,
+            data,
+            true,
+            with_logits,
+        ),
     }
 }
 
@@ -94,6 +100,7 @@ fn train_classification_model<B: AutodiffBackend + Backend>(
     device: B::Device,
     data: Vec<SampleData>,
     is_multi_classification: bool,
+    with_logits: bool,
 ) -> NeuralNetwork<B> {
     create_artifacts_directory(artifact_dir);
     config
@@ -114,11 +121,9 @@ fn train_classification_model<B: AutodiffBackend + Backend>(
         .shuffle(config.seed)
         .build(InMemDataset::new(vec![]));
 
-    let model = if is_multi_classification {
-        NeuralNetwork::with_muti_classification(layers)
-    } else {
-        NeuralNetwork::new(layers)
-    };
+    let mut model = NeuralNetwork::new(layers);
+    model.with_muti_classification(is_multi_classification);
+    model.with_logits(with_logits);
 
     let learner = LearnerBuilder::new(artifact_dir)
         .metric_train_numeric(AccuracyMetric::new())

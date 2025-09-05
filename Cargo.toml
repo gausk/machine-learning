@@ -6,6 +6,8 @@ members = [
     "advanced-learning-algorithms/module1/practice-w1-hdr",
     "advanced-learning-algorithms/module2/lab1-relu",
     "advanced-learning-algorithms/module2/lab2-softmax",
+    "advanced-learning-algorithms/module2/lab3-multiclass",
+    "advanced-learning-algorithms/module2/lab4-derivatives",
     "supervised-learning/module1/l1-intro",
     "supervised-learning/module1/lab2-model-representation",
     "supervised-learning/module1/lab3-cost-function",

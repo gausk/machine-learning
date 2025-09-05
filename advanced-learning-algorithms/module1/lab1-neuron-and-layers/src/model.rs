@@ -6,7 +6,7 @@ use burn::nn::{
 };
 use burn::optim::{AdamConfig, GradientsParams, Optimizer};
 use burn::prelude::*;
-use burn::tensor::activation::{relu, sigmoid, tanh};
+use burn::tensor::activation::{relu, sigmoid, softmax, tanh};
 use burn::tensor::backend::AutodiffBackend;
 use burn::train::{ClassificationOutput, RegressionOutput};
 use serde::{Deserialize, Serialize};
@@ -18,6 +18,7 @@ pub enum Activation {
     Tanh,
     #[default]
     None,
+    Softmax,
 }
 
 #[derive(Module, Debug)]
@@ -44,6 +45,7 @@ impl<B: Backend> Layer<B> {
             Activation::Sigmoid => sigmoid(output),
             Activation::Tanh => tanh(output),
             Activation::None => output,
+            Activation::Softmax => softmax(output, 1),
         }
     }
 }
@@ -52,6 +54,7 @@ impl<B: Backend> Layer<B> {
 pub struct NeuralNetwork<B: Backend> {
     layers: Vec<Layer<B>>,
     is_multi_classification: bool,
+    with_logits: bool,
 }
 
 impl<B: Backend> NeuralNetwork<B> {
@@ -59,15 +62,18 @@ impl<B: Backend> NeuralNetwork<B> {
         Self {
             layers,
             is_multi_classification: false,
+            with_logits: false,
         }
     }
 
-    pub fn with_muti_classification(layers: Vec<Layer<B>>) -> Self {
-        Self {
-            layers,
-            is_multi_classification: true,
-        }
+    pub fn with_muti_classification(&mut self, is_multi_classification: bool) {
+        self.is_multi_classification = is_multi_classification;
     }
+
+    pub fn with_logits(&mut self, logits: bool) {
+        self.with_logits = logits;
+    }
+
     pub fn forward(&self, mut x: Tensor<B, 2>) -> Tensor<B, 2> {
         for layer in &self.layers {
             x = layer.forward(x);
@@ -84,10 +90,12 @@ impl<B: Backend> NeuralNetwork<B> {
         let targets_int = targets.clone().int().reshape([-1]);
         let loss = if self.is_multi_classification {
             CrossEntropyLossConfig::new()
+                .with_logits(self.with_logits)
                 .init(&output.device())
                 .forward(output.clone(), targets_int.clone())
         } else {
             BinaryCrossEntropyLossConfig::new()
+                .with_logits(self.with_logits)
                 .init(&output.device())
                 .forward(output.clone(), targets.int())
         };
