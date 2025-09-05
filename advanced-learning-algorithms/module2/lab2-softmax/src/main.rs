@@ -28,7 +28,7 @@ fn main() {
     let layers: Vec<Layer<MyBackend>> = vec![
         Layer::new(2, 25, Activation::Sigmoid, &device),
         Layer::new(25, 15, Activation::Sigmoid, &device),
-        Layer::new(15, 1, Activation::Sigmoid, &device),
+        Layer::new(15, 4, Activation::None, &device),
     ];
 
     let model = train_model(
@@ -55,10 +55,17 @@ fn main() {
 
     let mut correct = 0;
     for i in 0..data_size {
-        let y = data[i].target[0];
-        let y_pred = y_predicted[i];
+        let y = data[i].target[0] as usize;
+        let mut max_prob = y_predicted[4 * i];
+        let mut predicted_class = 0;
+        for j in 1..4 {
+            if y_predicted[4 * i + j] > max_prob {
+                max_prob = y_predicted[4 * i + j];
+                predicted_class = j;
+            }
+        }
 
-        if (y_pred - y).abs() < 0.5 {
+        if predicted_class == y {
             correct += 1;
         }
     }
