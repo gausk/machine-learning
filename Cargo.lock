@@ -3575,6 +3575,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab1-decision-tree"
+version = "0.1.0"
+
+[[package]]
+name = "lab1-model-evaluation"
+version = "0.1.0"
+
+[[package]]
 name = "lab1-neuron-and-layers"
 version = "0.1.0"
 dependencies = [

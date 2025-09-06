@@ -18,6 +18,10 @@ This repository contains Rust implementations of all labs from the [Machine Lear
 
 #### Module 2: Neural Network Training
 
+#### Module 3: Advice for applying Machine Learning
+
+#### Module 4: Decision Trees
+
 ## Acknowledgements
 This project is inspired by the Machine Learning course by Andrew Ng on Coursera. The implementations are designed to help learners understand the concepts of machine learning through practical coding exercises in Rust.
 
