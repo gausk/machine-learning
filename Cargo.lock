@@ -3652,6 +3652,7 @@ dependencies = [
  "linfa-linear",
  "linfa-preprocessing",
  "ndarray 0.15.6",
+ "plotters",
  "rand 0.8.5",
 ]
 

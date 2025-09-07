@@ -1,3 +1,4 @@
+use lab1_model_evaluation::{linear_regression_training_with_polynomial, plot_mse};
 use lab3_fs_and_lr::load_data;
 use linfa::Dataset;
 use linfa::dataset::Records;
@@ -27,7 +28,7 @@ fn main() {
     // Normalize input
     let scaler = LinearScaler::standard().fit(&data_train).unwrap();
     println!("Mean: {} Std: {}", scaler.offsets(), 1.0 / scaler.scales());
-    let scaled_data_train = scaler.transform(data_train);
+    let scaled_data_train = scaler.transform(data_train.clone());
 
     let model = LinearRegression::default().fit(&scaled_data_train).unwrap();
 
@@ -39,8 +40,40 @@ fn main() {
         / 2.0;
     println!("Training MSE: {}", train_mse_error);
 
-    let scaled_data_cv = scaler.transform(data_cv);
+    let scaled_data_cv = scaler.transform(data_cv.clone());
     let predict_cv = model.predict(&scaled_data_cv);
     let cv_mse_error = predict_cv.mean_squared_error(&scaled_data_cv).unwrap() / 2.0;
     println!("CV MSE: {}", cv_mse_error);
+
+    let mut mse_trains = Vec::new();
+    let mut mse_cvs = Vec::new();
+    for degree in 1..=11 {
+        let (mse_train, mse_cv) =
+            linear_regression_training_with_polynomial(&data_train, &data_cv, degree);
+        mse_trains.push(mse_train);
+        mse_cvs.push(mse_cv);
+    }
+    println!("Training MSE with degrees: {mse_trains:?}");
+    println!("CV MSE with degrees: {mse_cvs:?}");
+    plot_mse(&mse_trains, &mse_cvs);
+
+    let min_degree = mse_cvs
+        .iter()
+        .enumerate()
+        .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+        .map(|(idx, _)| idx + 1)
+        .unwrap();
+
+    println!("CV is minimum for degree: {min_degree}");
+
+    let (train_mse, test_mse) =
+        linear_regression_training_with_polynomial(&data_train, &data_test, min_degree);
+    println!(
+        "Train MSE: {}\nCV MSE: {}\nTest MSE: {}",
+        train_mse,
+        mse_cvs[min_degree - 1],
+        test_mse
+    );
+
+    println!("Similarly we can do this in Neural Network");
 }
