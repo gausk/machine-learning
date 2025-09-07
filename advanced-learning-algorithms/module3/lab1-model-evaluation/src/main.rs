@@ -55,7 +55,7 @@ fn main() {
     }
     println!("Training MSE with degrees: {mse_trains:?}");
     println!("CV MSE with degrees: {mse_cvs:?}");
-    plot_mse(&mse_trains, &mse_cvs);
+    plot_mse(&mse_trains, &mse_cvs, "mse.png");
 
     let min_degree = mse_cvs
         .iter()

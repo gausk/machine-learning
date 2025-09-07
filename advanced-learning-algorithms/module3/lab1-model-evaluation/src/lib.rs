@@ -90,9 +90,9 @@ pub fn linear_regression_training_with_polynomial(
     (train_mse_error, cv_mse_error)
 }
 
-pub fn plot_mse(train_mse_error: &[f64], cv_mse_error: &[f64]) {
+pub fn plot_mse(train_mse_error: &[f64], cv_mse_error: &[f64], path: &str) {
     use plotters::prelude::*;
-    let root = BitMapBackend::new("mse.png", (640, 480)).into_drawing_area();
+    let root = BitMapBackend::new(path, (640, 480)).into_drawing_area();
     root.fill(&WHITE).unwrap();
 
     let degree = (1..=train_mse_error.len())
