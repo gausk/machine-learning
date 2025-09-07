@@ -6,3 +6,10 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
+ndarray = { workspace = true }
+linfa = "0.7.0"
+linfa-linear = "0.7.0"
+linfa-preprocessing = "0.7.0"
+lab3-fs-and-lr = { path = "../../../supervised-learning/module2/lab3-fs-and-lr" }
+rand = "0.8"
+itertools = "0.10.5"
