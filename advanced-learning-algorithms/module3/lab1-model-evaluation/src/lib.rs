@@ -1,6 +1,5 @@
 use itertools::Itertools;
-use linfa::Dataset;
-use ndarray::{Array1, Array2, ArrayView2};
+use ndarray::Array2;
 
 /// PolynomialFeatures transformer for expanding features
 pub struct PolynomialFeatures {
@@ -17,7 +16,7 @@ impl PolynomialFeatures {
     }
 
     /// Transform a 2D array (features) into polynomial features
-    pub fn transform_array(&self, data: ArrayView2<f64>) -> Array2<f64> {
+    pub fn transform_array(&self, data: &Array2<f64>) -> Array2<f64> {
         let num_samples = data.nrows();
         let num_features = data.ncols();
 
@@ -58,15 +57,6 @@ impl PolynomialFeatures {
 
         out
     }
-
-    /// Transform a linfa Dataset (records + targets)
-    pub fn transform(
-        &self,
-        data: &Dataset<Array2<f64>, Array1<f64>>,
-    ) -> Dataset<Array2<f64>, Array1<f64>> {
-        let new_x = self.transform_array(data.records().view());
-        Dataset::new(new_x, data.targets().clone())
-    }
 }
 
 #[cfg(test)]
@@ -76,15 +66,37 @@ mod tests {
 
     #[test]
     fn test_polynomial_features() {
-        let records = array![[2.0, 3.0]];
-        let targets = array![1.0];
-        let dataset = Dataset::new(records, targets);
-
+        let input = array![[2.0, 3.0]];
         let poly_features = PolynomialFeatures::new(2, false);
-        let transformed_dataset = poly_features.transform(&dataset);
+        let result = poly_features.transform_array(&input);
 
         // Expected features: x1, x2, x1^2, x1*x2, x2^2
         let expected = array![[2.0, 3.0, 4.0, 6.0, 9.0]];
-        assert_eq!(transformed_dataset.records(), &expected);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_polynomial_features_with_bias() {
+        let input = array![[2.0, 3.0]];
+        let poly_features = PolynomialFeatures::new(2, true);
+        let result = poly_features.transform_array(&input);
+
+        // Expected features: bias, x1, x2, x1^2, x1*x2, x2^2
+        let expected = array![[1.0, 2.0, 3.0, 4.0, 6.0, 9.0]];
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_polynomial_features_multiple_samples() {
+        let input = array![[1.0, 2.0], [3.0, 4.0]];
+        let poly_features = PolynomialFeatures::new(2, false);
+        let result = poly_features.transform_array(&input);
+
+        // Expected features for each row: x1, x2, x1^2, x1*x2, x2^2
+        let expected = array![
+            [1.0, 2.0, 1.0, 2.0, 4.0],   // First sample: [1,2] -> [1,2,1,2,4]
+            [3.0, 4.0, 9.0, 12.0, 16.0]  // Second sample: [3,4] -> [3,4,9,12,16]
+        ];
+        assert_eq!(result, expected);
     }
 }
