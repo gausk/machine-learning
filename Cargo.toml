@@ -12,6 +12,7 @@ members = [
     "advanced-learning-algorithms/module2/practice-w2-hdrm",
     "advanced-learning-algorithms/module3/lab1-model-evaluation",
     "advanced-learning-algorithms/module3/lab2-bias-and-variance",
+    "advanced-learning-algorithms/module3/practice-w3-afaml",
     "advanced-learning-algorithms/module4/lab1-decision-tree",
     "advanced-learning-algorithms/module4/lab2-tree-ensemble",
     "supervised-learning/module1/l1-intro",

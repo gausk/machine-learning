@@ -6,12 +6,11 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
-linfa-elasticnet = "0.7"
+lab1-model-evaluation = { path = "../lab1-model-evaluation" }
 lab3-fs-and-lr = { path = "../../../supervised-learning/module2/lab3-fs-and-lr" }
 linfa = "0.7.0"
-linfa-linear = "0.7.0"
+linfa-elasticnet = "0.7"
 linfa-preprocessing = "0.7.0"
 ndarray = { workspace = true }
 plotters = "0.3.7"
 rand = "0.8"
-lab1-model-evaluation = { path = "../lab1-model-evaluation" }

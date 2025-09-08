@@ -3689,7 +3689,6 @@ dependencies = [
  "lab3-fs-and-lr",
  "linfa",
  "linfa-elasticnet",
- "linfa-linear",
  "linfa-preprocessing",
  "ndarray 0.15.6",
  "plotters",
@@ -5110,6 +5109,17 @@ version = "0.1.0"
 dependencies = [
  "lab2-mvlr",
  "lab3-fs-and-lr",
+ "ndarray 0.15.6",
+]
+
+[[package]]
+name = "practice-w3-afaml"
+version = "0.1.0"
+dependencies = [
+ "burn",
+ "burn-ndarray",
+ "lab1-neuron-and-layers",
+ "lab2-softmax",
  "ndarray 0.15.6",
 ]
 

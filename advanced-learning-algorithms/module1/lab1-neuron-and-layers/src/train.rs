@@ -6,6 +6,7 @@ use burn::config::Config;
 use burn::data::dataloader::DataLoaderBuilder;
 use burn::data::dataset::InMemDataset;
 use burn::optim::AdamConfig;
+use burn::optim::decay::WeightDecayConfig;
 use burn::prelude::*;
 use burn::record::CompactRecorder;
 use burn::tensor::backend::AutodiffBackend;
@@ -35,6 +36,8 @@ pub struct TrainingConfig {
     pub seed: u64,
     #[config(default = 1.0e-4)]
     pub learning_rate: f64,
+    #[config(default = 0.0)]
+    pub lambda: f32,
 }
 
 impl<B: AutodiffBackend> TrainStep<SimpleBatch<B>, RegressionOutput<B>> for NeuralNetwork<B> {
@@ -76,31 +79,75 @@ pub fn train_model<B: AutodiffBackend + Backend>(
     data: Vec<SampleData>,
     task_type: TaskType,
 ) -> NeuralNetwork<B> {
+    train_model_with_test_data(
+        artifact_dir,
+        config,
+        layers,
+        device,
+        data,
+        Vec::new(),
+        task_type,
+        true,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn train_model_with_test_data<B: AutodiffBackend + Backend>(
+    artifact_dir: &str,
+    config: TrainingConfig,
+    layers: Vec<Layer<B>>,
+    device: B::Device,
+    train_data: Vec<SampleData>,
+    test_data: Vec<SampleData>,
+    task_type: TaskType,
+    verbose: bool,
+) -> NeuralNetwork<B> {
     match task_type {
-        TaskType::Classification => {
-            train_classification_model(artifact_dir, config, layers, device, data, false, false)
-        }
-        TaskType::Regression => train_regression_model(artifact_dir, config, layers, device, data),
+        TaskType::Classification => train_classification_model(
+            artifact_dir,
+            config,
+            layers,
+            device,
+            train_data,
+            test_data,
+            false,
+            false,
+            verbose,
+        ),
+        TaskType::Regression => train_regression_model(
+            artifact_dir,
+            config,
+            layers,
+            device,
+            train_data,
+            test_data,
+            verbose,
+        ),
         TaskType::MultiClassification(with_logits) => train_classification_model(
             artifact_dir,
             config,
             layers,
             device,
-            data,
+            train_data,
+            test_data,
             true,
             with_logits,
+            verbose,
         ),
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn train_classification_model<B: AutodiffBackend + Backend>(
     artifact_dir: &str,
     config: TrainingConfig,
     layers: Vec<Layer<B>>,
     device: B::Device,
-    data: Vec<SampleData>,
+    train_data: Vec<SampleData>,
+    test_data: Vec<SampleData>,
     is_multi_classification: bool,
     with_logits: bool,
+    verbose: bool,
 ) -> NeuralNetwork<B> {
     create_artifacts_directory(artifact_dir);
     config
@@ -113,13 +160,13 @@ fn train_classification_model<B: AutodiffBackend + Backend>(
         .batch_size(config.batch_size)
         .num_workers(config.num_workers)
         .shuffle(config.seed)
-        .build(InMemDataset::new(data));
+        .build(InMemDataset::new(train_data));
 
     let test_loader = DataLoaderBuilder::new(SimpleBatcher)
         .batch_size(config.batch_size)
         .num_workers(config.num_workers)
         .shuffle(config.seed)
-        .build(InMemDataset::new(vec![]));
+        .build(InMemDataset::new(test_data));
 
     let mut model = NeuralNetwork::new(layers);
     model.with_muti_classification(is_multi_classification);
@@ -134,11 +181,20 @@ fn train_classification_model<B: AutodiffBackend + Backend>(
         .devices(vec![device.clone()])
         .num_epochs(config.num_epochs)
         .summary()
-        .build(model, config.optimizer.init(), config.learning_rate);
+        .build(
+            model,
+            config
+                .optimizer
+                .with_weight_decay(Some(WeightDecayConfig::new(config.lambda)))
+                .init(),
+            config.learning_rate,
+        );
 
     let model_trained = learner.fit::<SimpleBatch<B>, SimpleBatch<B::InnerBackend>, ClassificationOutput<B>, ClassificationOutput<B::InnerBackend>>(train_loader, test_loader);
 
-    model_trained.parameters();
+    if verbose {
+        model_trained.parameters();
+    }
     model_trained
         .clone()
         .save_file(format!("{artifact_dir}/model"), &CompactRecorder::new())
@@ -152,7 +208,9 @@ fn train_regression_model<B: AutodiffBackend + Backend>(
     config: TrainingConfig,
     layers: Vec<Layer<B>>,
     device: B::Device,
-    data: Vec<SampleData>,
+    train_data: Vec<SampleData>,
+    test_data: Vec<SampleData>,
+    verbose: bool,
 ) -> NeuralNetwork<B> {
     create_artifacts_directory(artifact_dir);
     config
@@ -165,13 +223,13 @@ fn train_regression_model<B: AutodiffBackend + Backend>(
         .batch_size(config.batch_size)
         .num_workers(config.num_workers)
         .shuffle(config.seed)
-        .build(InMemDataset::new(data));
+        .build(InMemDataset::new(train_data));
 
     let test_loader = DataLoaderBuilder::new(SimpleBatcher)
         .batch_size(config.batch_size)
         .num_workers(config.num_workers)
         .shuffle(config.seed)
-        .build(InMemDataset::new(vec![]));
+        .build(InMemDataset::new(test_data));
 
     let learner = LearnerBuilder::new(artifact_dir)
         .metric_train_numeric(LossMetric::new())
@@ -182,13 +240,18 @@ fn train_regression_model<B: AutodiffBackend + Backend>(
         .summary()
         .build(
             NeuralNetwork::new(layers),
-            config.optimizer.init(),
+            config
+                .optimizer
+                .with_weight_decay(Some(WeightDecayConfig::new(config.lambda)))
+                .init(),
             config.learning_rate,
         );
 
     let model_trained = learner.fit::<SimpleBatch<B>, SimpleBatch<B::InnerBackend>, RegressionOutput<B>, RegressionOutput<B::InnerBackend>>(train_loader, test_loader);
 
-    model_trained.parameters();
+    if verbose {
+        model_trained.parameters();
+    }
     model_trained
         .clone()
         .save_file(format!("{artifact_dir}/model"), &CompactRecorder::new())
