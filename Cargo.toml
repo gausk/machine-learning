@@ -15,6 +15,7 @@ members = [
     "advanced-learning-algorithms/module3/practice-w3-afaml",
     "advanced-learning-algorithms/module4/lab1-decision-tree",
     "advanced-learning-algorithms/module4/lab2-tree-ensemble",
+    "advanced-learning-algorithms/module4/practice-w4-decision-tree",
     "supervised-learning/module1/l1-intro",
     "supervised-learning/module1/lab2-model-representation",
     "supervised-learning/module1/lab3-cost-function",
