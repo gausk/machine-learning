@@ -117,6 +117,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "approx"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cab112f0a86d568ea0e627cc1d6be74a1e9cd55214684db5561995f6dad897c6"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "arbitrary"
 version = "1.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3747,6 +3756,11 @@ dependencies = [
 [[package]]
 name = "lab2-tree-ensemble"
 version = "0.1.0"
+dependencies = [
+ "csv",
+ "serde",
+ "smartcore",
+]
 
 [[package]]
 name = "lab3-coffe-roasting-simple"
@@ -4020,7 +4034,7 @@ version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56f9097edc7c89d03d526efbacf6d90914e3a8fa53bd56c2d1489e3a90819370"
 dependencies = [
- "approx",
+ "approx 0.4.0",
  "ndarray 0.15.6",
  "num-traits",
  "rand 0.8.5",
@@ -4034,7 +4048,7 @@ version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3daf1027356c9bb8fdb8e9d04bd042c0051af6d285ff3242fe86ae68055498e4"
 dependencies = [
- "approx",
+ "approx 0.4.0",
  "linfa",
  "linfa-linalg",
  "ndarray 0.15.6",
@@ -4089,7 +4103,7 @@ version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "184d0a8a2b0c034e6d7b98f3f52f9a3f5897d262ba817d3c5d069238ef482b8f"
 dependencies = [
- "approx",
+ "approx 0.4.0",
  "encoding",
  "linfa",
  "linfa-linalg",
@@ -4372,7 +4386,7 @@ version = "0.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "adb12d4e967ec485a5f71c6311fe28158e9d6f4bc4a447b474184d0f91a8fa32"
 dependencies = [
- "approx",
+ "approx 0.4.0",
  "matrixmultiply",
  "num-complex",
  "num-integer",
@@ -6268,6 +6282,19 @@ name = "smallvec"
 version = "1.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
+
+[[package]]
+name = "smartcore"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "93061bd2a6ba45a369f2f96dc44d2a1a9f942fa7f8501a3aee3a7779fc71736a"
+dependencies = [
+ "approx 0.5.1",
+ "cfg-if",
+ "num",
+ "num-traits",
+ "rand 0.8.5",
+]
 
 [[package]]
 name = "smartstring"

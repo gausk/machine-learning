@@ -22,6 +22,14 @@ This repository contains Rust implementations of all labs from the [Machine Lear
 
 #### Module 4: Decision Trees
 
+### Course 3: Unsupervised Learning, Recommenders, Reinforcement Learning
+
+#### Module 1: Unsupervised Learning
+
+#### Module 2: Recommenders System
+
+#### Module 3: Reinforcement Learning
+
 ## Acknowledgements
 This project is inspired by the Machine Learning course by Andrew Ng on Coursera. The implementations are designed to help learners understand the concepts of machine learning through practical coding exercises in Rust.
 
