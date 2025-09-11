@@ -3652,6 +3652,15 @@ name = "lab1-decision-tree"
 version = "0.1.0"
 
 [[package]]
+name = "lab1-k-means"
+version = "0.1.0"
+dependencies = [
+ "ndarray 0.15.6",
+ "ndarray-npy",
+ "rand 0.8.5",
+]
+
+[[package]]
 name = "lab1-model-evaluation"
 version = "0.1.0"
 dependencies = [
