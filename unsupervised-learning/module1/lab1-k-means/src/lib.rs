@@ -58,7 +58,7 @@ pub fn compute_centroids(x: &[Vec<f64>], idxs: &[usize], centers: usize) -> Vec<
         .zip(counts.iter())
         .for_each(|(centroid, count)| {
             centroid.iter_mut().for_each(|c| {
-                *c = *c / *count as f64;
+                *c /= *count as f64;
             });
         });
     centroids
