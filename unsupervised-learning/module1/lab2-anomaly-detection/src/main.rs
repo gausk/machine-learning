@@ -10,10 +10,10 @@ fn main() {
     println!("x_val shape: {:?}", x_val.shape());
     println!("y_val shape: {:?}", y_val.shape());
     let (mu, var) = calculate_mean_and_variance(&x_train);
-    println!("mu: {:?}", mu);
-    println!("var: {:?}", var);
-    let probs = multivariate_gaussian(&x_val, &mu, &var);
-    let (epsilon, f1) = select_threshold(&probs, &y_val);
+    println!("mu: {:?}", mu.to_vec());
+    println!("var: {:?}", var.to_vec());
+    let probabilities = multivariate_gaussian(&x_val, &mu, &var);
+    let (epsilon, f1) = select_threshold(&probabilities, &y_val);
     println!("epsilon: {:?}", epsilon);
     println!("f1: {:?}", f1);
 
@@ -23,10 +23,10 @@ fn main() {
     println!("x_val shape: {:?}", x_val.shape());
     println!("y_val shape: {:?}", y_val.shape());
     let (mu, var) = calculate_mean_and_variance(&x_train);
-    println!("mu: {:?}", mu);
-    println!("var: {:?}", var);
-    let probs = multivariate_gaussian(&x_val, &mu, &var);
-    let (epsilon, f1) = select_threshold(&probs, &y_val);
+    println!("mu: {:?}", mu.to_vec());
+    println!("var: {:?}", var.to_vec());
+    let probabilities = multivariate_gaussian(&x_val, &mu, &var);
+    let (epsilon, f1) = select_threshold(&probabilities, &y_val);
     println!("epsilon: {:?}", epsilon);
     println!("f1: {:?}", f1);
 }

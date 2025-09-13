@@ -3659,6 +3659,10 @@ name = "l1-intro"
 version = "0.1.0"
 
 [[package]]
+name = "lab1-cfrs"
+version = "0.1.0"
+
+[[package]]
 name = "lab1-classification"
 version = "0.1.0"
 dependencies = [

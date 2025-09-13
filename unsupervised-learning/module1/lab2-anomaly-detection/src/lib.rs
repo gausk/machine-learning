@@ -19,41 +19,17 @@ pub fn calculate_mean_and_variance(x: &Array2<f64>) -> (Array1<f64>, Array1<f64>
     (mu, variance)
 }
 
-/*
-
-def multivariate_gaussian(X, mu, var):
-    """
-    Computes the probability
-    density function of the examples X under the multivariate gaussian
-    distribution with parameters mu and var. If var is a matrix, it is
-    treated as the covariance matrix. If var is a vector, it is treated
-    as the var values of the variances in each dimension (a diagonal
-    covariance matrix
-    """
-
-    k = len(mu)
-
-    if var.ndim == 1:
-        var = np.diag(var)
-
-    X = X - mu
-    p = (2* np.pi)**(-k/2) * np.linalg.det(var)**(-0.5) * \
-        np.exp(-0.5 * np.sum(np.matmul(X, np.linalg.pinv(var)) * X, axis=1))
-
-    return p
- */
-
 /// Computes the probability density function of the examples X under
 /// the multivariate gaussian distribution with parameters mu and var.
 /// Features are assumed independent here.
 pub fn multivariate_gaussian(x: &Array2<f64>, mu: &Array1<f64>, var: &Array1<f64>) -> Array1<f64> {
     let n = x.nrows();
-    let coeff = var.mapv(|v| 1.0 / (2.0 * PI * v).sqrt()).product();
+    let coefficient = var.mapv(|v| 1.0 / (2.0 * PI * v).sqrt()).product();
     let mut pdf = Array1::<f64>::zeros(n);
     for (i, row) in x.outer_iter().enumerate() {
         let diff = &row - mu;
         let exp_term = (&diff * &diff / (var * 2.0)).mapv(|v| (-v).exp());
-        pdf[i] = coeff * exp_term.product();
+        pdf[i] = coefficient * exp_term.product();
     }
     pdf
 }
@@ -68,11 +44,11 @@ pub fn select_threshold(p_val: &Array1<f64>, y_val: &Array1<u8>) -> (f64, f64) {
     let mut best_epsilon = 0f64;
     let n = y_val.len();
     let total_positives = y_val.sum() as f64;
-    for epsioln in (0..1000).map(|i| p_val_min + (i as f64 / 1000f64) * (p_val_max - p_val_min)) {
+    for epsilon in (0..1000).map(|i| p_val_min + (i as f64 / 1000f64) * (p_val_max - p_val_min)) {
         let mut true_positives = 0f64;
         let mut false_positives = 0f64;
         for i in 0..n {
-            if p_val[i] <= epsioln {
+            if p_val[i] <= epsilon {
                 if y_val[i] == 1 {
                     true_positives += 1f64;
                 } else {
@@ -85,7 +61,7 @@ pub fn select_threshold(p_val: &Array1<f64>, y_val: &Array1<u8>) -> (f64, f64) {
         let f1 = (2.0 * precision * recall) / (precision + recall);
         if f1 > best_f1 {
             best_f1 = f1;
-            best_epsilon = epsioln;
+            best_epsilon = epsilon;
         }
     }
     (best_epsilon, best_f1)
