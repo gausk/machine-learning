@@ -9,7 +9,7 @@ pub fn load_data(suffix: &str) -> (Array2<f64>, Array2<f64>, Array1<u8>) {
     let x_val: Array2<f64> =
         ndarray_npy::read_npy(path.join(format!("../data/X_val_{suffix}.npy"))).unwrap();
     let y_val: Array1<u8> =
-        ndarray_npy::read_npy(path.join(format!("../data/Y_val_{suffix}.npy"))).unwrap();
+        ndarray_npy::read_npy(path.join(format!("../data/y_val_{suffix}.npy"))).unwrap();
     (x, x_val, y_val)
 }
 

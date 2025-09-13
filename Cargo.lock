@@ -3661,6 +3661,11 @@ version = "0.1.0"
 [[package]]
 name = "lab1-cfrs"
 version = "0.1.0"
+dependencies = [
+ "csv",
+ "ndarray 0.15.6",
+ "ndarray-csv",
+]
 
 [[package]]
 name = "lab1-classification"
@@ -4461,6 +4466,18 @@ dependencies = [
  "portable-atomic-util",
  "rawpointer",
  "rayon",
+]
+
+[[package]]
+name = "ndarray-csv"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f7c71981ebc5a541b64a8af9db36502669932550d23c0e5e8e5a873d11902b4"
+dependencies = [
+ "csv",
+ "either",
+ "ndarray 0.15.6",
+ "serde",
 ]
 
 [[package]]
