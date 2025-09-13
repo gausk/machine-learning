@@ -180,7 +180,6 @@ fn train_classification_model<B: AutodiffBackend + Backend>(
         .with_file_checkpointer(CompactRecorder::new())
         .devices(vec![device.clone()])
         .num_epochs(config.num_epochs)
-        .summary()
         .build(
             model,
             config
