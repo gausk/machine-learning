@@ -37,6 +37,7 @@ members = [
     "supervised-learning/module3/lab9-regularization",
     "supervised-learning/module3/practice-w3-logistic-regression",
     "unsupervised-learning/module1/lab1-k-means",
+    "unsupervised-learning/module1/lab2-anomaly-detection",
 ]
 resolver = "3"
 

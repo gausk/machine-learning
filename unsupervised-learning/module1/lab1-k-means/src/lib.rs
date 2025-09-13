@@ -109,9 +109,9 @@ pub fn replace_pixel_with_closest_centroids(
     x: &[Vec<f64>],
     centroids: &[Vec<f64>],
 ) -> Vec<Vec<u8>> {
-    let idxs = find_closest_centroid(x, centroids);
+    let idxes = find_closest_centroid(x, centroids);
     let mut out: Vec<Vec<u8>> = Vec::new();
-    for idx in idxs {
+    for idx in idxes {
         out.push(
             centroids[idx]
                 .iter()
@@ -124,7 +124,7 @@ pub fn replace_pixel_with_closest_centroids(
 
 pub fn create_png(data: &[Vec<u8>], dimensions: (usize, usize)) {
     println!("Creating PNG ...");
-    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/compressed.png");
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("compressed.png");
     let mut img = RgbImage::new(dimensions.0 as u32, dimensions.1 as u32);
     for width in 0..dimensions.0 {
         for height in 0..dimensions.1 {

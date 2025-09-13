@@ -3722,6 +3722,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab2-anomaly-detection"
+version = "0.1.0"
+dependencies = [
+ "ndarray 0.15.6",
+ "ndarray-npy",
+]
+
+[[package]]
 name = "lab2-bias-and-variance"
 version = "0.1.0"
 dependencies = [
