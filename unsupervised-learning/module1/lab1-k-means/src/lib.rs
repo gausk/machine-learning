@@ -1,3 +1,5 @@
+use image::Rgb;
+use image::{GenericImageView, ImageReader, RgbImage};
 use ndarray::Array2;
 use ndarray_npy::read_npy;
 use rand::seq::SliceRandom;
@@ -82,4 +84,59 @@ pub fn compute_k_means_with_centroids(
         centroids = compute_centroids(x, &idxs, centroids.len());
     }
     centroids
+}
+
+pub fn load_image() -> Vec<Vec<f64>> {
+    println!("Loading image bird_small.png");
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/bird_small.png");
+    let img = ImageReader::open(path).unwrap().decode().unwrap();
+    let dims = img.dimensions();
+    println!("dimensions {:?}", dims);
+    let rgb_data = img.to_rgb8();
+    rgb_data
+        .pixels()
+        .map(|pixel| {
+            vec![
+                pixel[0] as f64 / 256.0,
+                pixel[1] as f64 / 256.0,
+                pixel[2] as f64 / 256.0,
+            ]
+        })
+        .collect()
+}
+
+pub fn replace_pixel_with_closest_centroids(
+    x: &[Vec<f64>],
+    centroids: &[Vec<f64>],
+) -> Vec<Vec<u8>> {
+    let idxs = find_closest_centroid(x, centroids);
+    let mut out: Vec<Vec<u8>> = Vec::new();
+    for idx in idxs {
+        out.push(
+            centroids[idx]
+                .iter()
+                .map(|&pixel| (pixel * 256.0) as u8)
+                .collect(),
+        )
+    }
+    out
+}
+
+pub fn create_png(data: &[Vec<u8>], dimensions: (usize, usize)) {
+    println!("Creating PNG ...");
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/compressed.png");
+    let mut img = RgbImage::new(dimensions.0 as u32, dimensions.1 as u32);
+    for width in 0..dimensions.0 {
+        for height in 0..dimensions.1 {
+            img.put_pixel(
+                width as u32,
+                height as u32,
+                Rgb(data[height * dimensions.1 + width]
+                    .clone()
+                    .try_into()
+                    .unwrap()),
+            )
+        }
+    }
+    img.save(path).unwrap();
 }

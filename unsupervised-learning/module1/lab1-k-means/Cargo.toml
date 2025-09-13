@@ -6,6 +6,7 @@ authors.workspace = true
 description.workspace = true
 
 [dependencies]
-ndarray-npy = "0.8"
+image = "0.25.8"
 ndarray = { workspace = true }
+ndarray-npy = "0.8"
 rand = "0.8"
