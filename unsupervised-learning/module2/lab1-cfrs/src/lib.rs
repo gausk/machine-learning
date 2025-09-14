@@ -104,7 +104,7 @@ pub fn collaborative_filtering_training(
     for i in 0..iterations {
         if i > iterations / 2 {
             lambda /= 2.0;
-            learning_rate *= 5.0;
+            learning_rate *= 2.0;
         }
         let cost = collaborative_filtering_cost(y_norm, r, &w, &x, &b, lambda);
         let (d_x, d_w, d_b) = backward_pass(&x, &w, &b, y_norm, r, lambda);
