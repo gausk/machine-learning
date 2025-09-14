@@ -90,18 +90,22 @@ pub fn normalize_rating(y: &Array2<f64>, r: &Array2<f64>) -> (Array2<f64>, Array
 pub fn collaborative_filtering_training(
     y_norm: &Array2<f64>,
     r: &Array2<f64>,
-    lambda: f64,
+    mut lambda: f64,
     iterations: usize,
     num_features: usize,
-    learning_rate: f64,
+    mut learning_rate: f64,
 ) -> (Array2<f64>, Array2<f64>, Array2<f64>) {
     let num_movies = y_norm.shape()[0];
     let num_users = y_norm.shape()[1];
     let mut x: Array2<f64> = Array::random((num_movies, num_features), StandardNormal);
     let mut w: Array2<f64> = Array::random((num_users, num_features), StandardNormal);
     let mut b: Array2<f64> = Array::random((1, num_users), StandardNormal);
-
+    // For 2nd half of the iterations, increase learning rate.
     for i in 0..iterations {
+        if i > iterations / 2 {
+            lambda /= 2.0;
+            learning_rate *= 5.0;
+        }
         let cost = collaborative_filtering_cost(y_norm, r, &w, &x, &b, lambda);
         let (d_x, d_w, d_b) = backward_pass(&x, &w, &b, y_norm, r, lambda);
         x -= &(learning_rate * d_x);
