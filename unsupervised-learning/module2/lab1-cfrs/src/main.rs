@@ -84,7 +84,7 @@ fn main() {
     println!("y new shape: {:?}", y.shape());
     println!("r new shae: {:?}", r.shape());
     let (y_norm, y_mean) = normalize_rating(&y, &r);
-    let (x_o, w_o, b_o) = collaborative_filtering_training(&y_norm, &r, 1.0, 3000, 100, 0.001);
+    let (x_o, w_o, b_o) = collaborative_filtering_training(&y_norm, &r, 1.0, 5000, 100, 0.001);
     println!("x_o shape: {:?}", x_o.shape());
     println!("w_o shape: {:?}", w_o.shape());
     println!("b_o shape: {:?}", b_o.shape());

@@ -1,13 +1,11 @@
 [package]
-name = "lab1-cfrs"
+name = "lab3-pca"
 version = "0.1.0"
 edition.workspace = true
 authors.workspace = true
 description.workspace = true
 
 [dependencies]
-csv = "1.3.1"
+linfa = "0.7.0"
+linfa-reduction = "0.7.0"
 ndarray = { workspace = true }
-ndarray-csv = "0.5.1"
-ndarray-rand = "0.14.0"
-serde = { version = "1.0.219", features = ["derive"] }
