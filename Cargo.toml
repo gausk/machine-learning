@@ -40,6 +40,7 @@ members = [
     "unsupervised-learning/module1/lab2-anomaly-detection",
     "unsupervised-learning/module2/lab1-cfrs",
     "unsupervised-learning/module2/lab3-pca",
+    "unsupervised-learning/module3/lab1-state-action-value-fn",
 ]
 resolver = "3"
 

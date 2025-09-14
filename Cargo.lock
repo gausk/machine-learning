@@ -3754,6 +3754,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab1-state-action-value-fn"
+version = "0.1.0"
+
+[[package]]
 name = "lab1-vectorization"
 version = "0.1.0"
 dependencies = [
