@@ -39,8 +39,10 @@ members = [
     "unsupervised-learning/module1/lab1-k-means",
     "unsupervised-learning/module1/lab2-anomaly-detection",
     "unsupervised-learning/module2/lab1-cfrs",
+    "unsupervised-learning/module2/lab2-dl-for-cbf",
     "unsupervised-learning/module2/lab3-pca",
     "unsupervised-learning/module3/lab1-state-action-value-fn",
+    "unsupervised-learning/module3/lab2-deep-q-learning-lunar-lander",
 ]
 resolver = "3"
 

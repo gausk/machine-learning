@@ -1,3 +1,6 @@
 advanced-learning-algorithms/module1/data/X.npy filter=lfs diff=lfs merge=lfs -text
 unsupervised-learning/module2/data/small_movies_Y.csv filter=lfs diff=lfs merge=lfs -text
 unsupervised-learning/module2/data/small_movies_R.csv filter=lfs diff=lfs merge=lfs -text
+unsupervised-learning/module2/data/content_item_train.csv filter=lfs diff=lfs merge=lfs -text
+unsupervised-learning/module2/data/content_user_to_genre.pickle filter=lfs diff=lfs merge=lfs -text
+unsupervised-learning/module2/data/content_user_train.csv filter=lfs diff=lfs merge=lfs -text
