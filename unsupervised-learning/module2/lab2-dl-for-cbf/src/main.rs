@@ -45,7 +45,6 @@ fn main() {
         device,
         train_data,
         test_data,
-        false,
     );
     println!("Training model: [{}]", model);
 }

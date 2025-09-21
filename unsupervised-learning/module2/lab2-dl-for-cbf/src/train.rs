@@ -36,7 +36,6 @@ pub fn train_cbf_model<B: AutodiffBackend + Backend>(
     device: B::Device,
     train_data: Vec<CBFData>,
     test_data: Vec<CBFData>,
-    verbose: bool,
 ) -> CBFModel<B> {
     create_artifacts_directory(artifact_dir);
     config
@@ -77,10 +76,6 @@ pub fn train_cbf_model<B: AutodiffBackend + Backend>(
         );
 
     let model_trained = learner.fit::<CBFBatch<B>, CBFBatch<B::InnerBackend>, RegressionOutput<B>, RegressionOutput<B::InnerBackend>>(train_loader, test_loader);
-
-    if verbose {
-        model_trained.parameters();
-    }
     model_trained
         .clone()
         .save_file(format!("{artifact_dir}/model"), &CompactRecorder::new())
