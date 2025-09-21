@@ -66,7 +66,7 @@ impl<B: Backend> ValidStep<SimpleBatch<B>, ClassificationOutput<B>> for NeuralNe
     }
 }
 
-fn create_artifacts_directory(path: &str) {
+pub fn create_artifacts_directory(path: &str) {
     std::fs::remove_dir_all(path).ok();
     std::fs::create_dir_all(path).unwrap();
 }
