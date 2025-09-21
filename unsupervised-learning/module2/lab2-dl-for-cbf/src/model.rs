@@ -34,8 +34,7 @@ impl<B: Backend> CBFModel<B> {
         let movie_out = self.movie_network.forward(movie_input);
         let user_norm = l2_norm(user_out, 1);
         let movie_norm = l2_norm(movie_out, 1);
-        let dot = user_norm * movie_norm;
-        dot.sum_dim(1).unsqueeze_dim(1)
+        user_norm * movie_norm
     }
 
     pub fn parameters(&self) {

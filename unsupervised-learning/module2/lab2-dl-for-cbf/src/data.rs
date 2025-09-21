@@ -8,9 +8,9 @@ use std::path::Path;
 
 #[derive(Debug, Config)]
 pub struct CBFData {
-    user_features: Vec<f32>,
-    movie_features: Vec<f32>,
-    rating: f32,
+    pub user_features: Vec<f32>,
+    pub movie_features: Vec<f32>,
+    pub rating: f32,
 }
 
 impl CBFData {
@@ -80,7 +80,7 @@ fn read_csv_to_matrx(path: &Path) -> Vec<Vec<f32>> {
         .collect()
 }
 
-pub fn load_data(percent: f64) -> (Vec<CBFData>, Vec<CBFData>) {
+pub fn load_data(percent: f64, validate_len: usize) -> (Vec<CBFData>, Vec<CBFData>, Vec<CBFData>) {
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data");
     let movie_train = read_csv_to_matrx(&path.join("content_user_train.csv"));
     let user_train = read_csv_to_matrx(&path.join("content_user_train.csv"));
@@ -108,6 +108,7 @@ pub fn load_data(percent: f64) -> (Vec<CBFData>, Vec<CBFData>) {
     data.shuffle(&mut thread_rng());
     let train_size = (data.len() as f64 * percent) as usize;
     let train_data = data[0..train_size].to_vec();
-    let test_data = data[train_size..].to_vec();
-    (train_data, test_data)
+    let test_data = data[train_size..data.len() - validate_len].to_vec();
+    let validate_data = data[data.len() - validate_len..].to_vec();
+    (train_data, test_data, validate_data)
 }
