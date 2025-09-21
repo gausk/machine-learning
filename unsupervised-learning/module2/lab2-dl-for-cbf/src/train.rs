@@ -27,6 +27,7 @@ impl<B: Backend> ValidStep<CBFBatch<B>, RegressionOutput<B>> for CBFModel<B> {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn train_cbf_model<B: AutodiffBackend + Backend>(
     artifact_dir: &str,
     config: TrainingConfig,

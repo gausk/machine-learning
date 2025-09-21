@@ -70,7 +70,6 @@ fn read_csv_to_matrx(path: &Path) -> Vec<Vec<f32>> {
         .from_path(path)
         .unwrap();
     rdr.records()
-        .into_iter()
         .map(|record| {
             record
                 .unwrap()
@@ -92,14 +91,13 @@ pub fn load_data(percent: f64) -> (Vec<CBFData>, Vec<CBFData>) {
         .unwrap();
     let y_train: Vec<f32> = rdr
         .records()
-        .into_iter()
         .map(|record| record.unwrap()[0].parse::<f32>().unwrap())
         .collect();
 
     let mut data: Vec<CBFData> = movie_train
         .into_iter()
-        .zip(y_train.into_iter())
-        .zip(user_train.into_iter())
+        .zip(y_train)
+        .zip(user_train)
         .map(|((movie_features, rating), user_features)| CBFData {
             movie_features,
             rating,
