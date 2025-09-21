@@ -44,7 +44,7 @@ fn main() {
     let model = train_cbf_model(
         "artifacts",
         TrainingConfig::new(AdamConfig::new())
-            .with_num_epochs(40)
+            .with_num_epochs(50)
             .with_learning_rate(0.01),
         user_layers,
         movie_layers,

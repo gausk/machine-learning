@@ -1,6 +1,5 @@
 use burn::nn::loss::{MseLoss, Reduction};
 use burn::prelude::{Backend, Module, Tensor};
-use burn::tensor::linalg::l2_norm;
 use burn::train::RegressionOutput;
 use lab1_neuron_and_layers::model::NeuralNetwork;
 
@@ -32,9 +31,7 @@ impl<B: Backend> CBFModel<B> {
     pub fn forward(&self, user_input: Tensor<B, 2>, movie_input: Tensor<B, 2>) -> Tensor<B, 2> {
         let user_out = self.user_network.forward(user_input);
         let movie_out = self.movie_network.forward(movie_input);
-        let user_norm = l2_norm(user_out, 1);
-        let movie_norm = l2_norm(movie_out, 1);
-        user_norm * movie_norm
+        user_out * movie_out
     }
 
     pub fn parameters(&self) {
