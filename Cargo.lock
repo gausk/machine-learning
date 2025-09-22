@@ -3803,6 +3803,11 @@ dependencies = [
 [[package]]
 name = "lab2-deep-q-learning-lunar-lander"
 version = "0.1.0"
+dependencies = [
+ "burn",
+ "burn-ndarray",
+ "lab1-neuron-and-layers",
+]
 
 [[package]]
 name = "lab2-dl-for-cbf"
